@@ -13,10 +13,20 @@ public static class RecipeEndpoints
         group.MapGet("/", async (
             ISender sender, CancellationToken ct,
             int page = 1, int pageSize = 12, Guid? categoryId = null,
-            RecipeDifficulty? difficulty = null, string sort = "-createdAt") =>
-            Results.Ok(await sender.Send(new GetRecipesQuery(page, pageSize, categoryId, difficulty, sort), ct)));
+            string? difficulty = null, string sort = "-createdAt") =>
+            Results.Ok(await sender.Send(new GetRecipesQuery(page, pageSize, categoryId, ParseDifficulty(difficulty), sort), ct)));
 
         group.MapGet("/{slug}", async (string slug, ISender sender, CancellationToken ct) =>
             Results.Ok(await sender.Send(new GetRecipeBySlugQuery(slug), ct)));
+    }
+
+    // Binding enum mặc định phân biệt hoa thường nên tự đọc; giá trị ngoài enum do validator chặn.
+    private static RecipeDifficulty? ParseDifficulty(string? value)
+    {
+        if (string.IsNullOrEmpty(value)) return null;
+
+        return Enum.TryParse<RecipeDifficulty>(value, ignoreCase: true, out var difficulty)
+            ? difficulty
+            : throw new BadHttpRequestException("difficulty không hợp lệ.");
     }
 }

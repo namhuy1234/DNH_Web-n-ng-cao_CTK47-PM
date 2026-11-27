@@ -13,12 +13,14 @@ public class CreateCategoryValidator : AbstractValidator<CreateCategoryCommand>
 {
     public CreateCategoryValidator()
     {
-        RuleFor(x => x.Name)
+        // Kiểm tra trên tên đã cắt dấu cách, đúng với giá trị sẽ được lưu.
+        RuleFor(x => (x.Name ?? string.Empty).Trim())
             .Cascade(CascadeMode.Stop)
             .NotEmpty().WithMessage("Tên danh mục không được để trống.")
             .Length(2, 50).WithMessage("Tên danh mục dài từ 2 đến 50 ký tự.")
             .Must(name => !name.Contains('<') && !name.Contains('>')).WithMessage("Tên danh mục không được chứa HTML.")
-            .Must(name => SlugHelper.Generate(name).Length > 0).WithMessage("Tên danh mục phải có chữ hoặc số.");
+            .Must(name => SlugHelper.Generate(name).Length > 0).WithMessage("Tên danh mục phải có chữ hoặc số.")
+            .OverridePropertyName(nameof(CreateCategoryCommand.Name));
 
         RuleFor(x => x.Description).MaximumLength(2000).WithMessage("Mô tả tối đa 2000 ký tự.");
     }
