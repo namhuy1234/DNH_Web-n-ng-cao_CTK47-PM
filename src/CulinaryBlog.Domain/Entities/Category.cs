@@ -14,14 +14,14 @@ public class Category : BaseEntity
 
     public ICollection<Recipe> Recipes { get; private set; } = new List<Recipe>();
 
-    public static Category Create(string name, string? description = null, int orderIndex = 0, string? imageUrl = null)
+    public static Category Create(string name, string? description = null, int orderIndex = 0, string? imageUrl = null, string? slug = null)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(name);
 
         return new Category
         {
             Name = name.Trim(),
-            Slug = SlugHelper.Generate(name),
+            Slug = slug ?? SlugHelper.Generate(name),
             Description = description,
             OrderIndex = orderIndex,
             ImageUrl = imageUrl

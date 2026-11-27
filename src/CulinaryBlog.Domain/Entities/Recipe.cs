@@ -1,5 +1,6 @@
 using CulinaryBlog.Domain.Common;
 using CulinaryBlog.Domain.Enums;
+using CulinaryBlog.Domain.Exceptions;
 
 namespace CulinaryBlog.Domain.Entities;
 
@@ -73,7 +74,7 @@ public class Recipe : BaseEntity
     public void Publish(DateTime publishedAt)
     {
         if (_steps.Count == 0)
-            throw new InvalidOperationException("Công thức phải có ít nhất 1 bước thực hiện.");
+            throw new BusinessRuleException(ErrorCodes.RecipePublishIncomplete, "Công thức phải có ít nhất 1 bước thực hiện.");
 
         Status = RecipeStatus.Published;
         PublishedAt = publishedAt;
