@@ -1,0 +1,36 @@
+Kiem thu frontend Lab 6 - chay ngay 27/11/2026 20:49
+Lenh: npm run test:utils
+
+  ✔ hiện đủ khi ít trang
+  ✔ rút gọn hai đầu khi ở giữa
+  ✔ rút gọn một phía khi ở đầu
+  ✔ trang vượt quá bị kẹp về trang cuối
+  ✔ không có trang
+✔ getPageItems
+  ✔ đọc số hợp lệ
+  ✔ giá trị sai trả về 1
+  ✔ lấy phần tử đầu của mảng
+✔ parsePage
+  ✔ formatDuration
+  ✔ formatDate theo giờ Việt Nam dù máy chạy múi giờ khác
+  ✔ formatDate theo kiểu Việt Nam
+  ✔ formatDate chuỗi sai trả về rỗng
+  ✔ getInitials
+✔ format
+  ✔ dùng detail của ProblemDetails
+  ✔ không có detail thì dùng câu mặc định theo mã
+  ✔ mất mạng và quá thời gian chờ
+  ✔ lỗi theo trường đổi về camelCase
+  ✔ Error thường giữ nguyên message
+✔ ApiError / toApiError
+  ✔ giữ đường dẫn nội bộ
+  ✔ chặn chuyển hướng ra ngoài
+✔ safeRedirect
+  ✔ normalizeText bỏ dấu và đ/Đ
+  ✔ parseRecipeFilters bỏ giá trị lạ
+  ✔ lọc theo từ khóa không dấu và độ khó, bỏ bản nháp
+  ✔ sắp xếp theo thời gian nấu tăng dần
+✔ recipe-search
+ℹ tests 24
+ℹ pass 24
+ℹ fail 0

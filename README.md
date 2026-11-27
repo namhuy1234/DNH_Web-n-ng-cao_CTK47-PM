@@ -1,4 +1,4 @@
-# Culinary Blog – Lab 5
+# Culinary Blog – Lab 6
 
 Backend .NET 10 theo Clean Architecture, cơ sở dữ liệu PostgreSQL 16.
 
@@ -125,3 +125,26 @@ dotnet test CulinaryBlog.slnx
 
 Gồm test quy tắc nghiệp vụ, validator và Dependency Rule của Clean Architecture.
 GitHub Actions (`.github/workflows/ci.yml`) build, test backend và kiểm tra frontend mỗi lần đẩy nhánh `huy-*`.
+
+## Lab 6: tiện ích, shadcn/ui, store, giao diện và layout
+
+| Phần | Vị trí |
+|---|---|
+| Lỗi API thống nhất (`ApiError`, `getErrorMessage`, `getFieldErrors`) | `frontend/lib/api/errors.ts` |
+| Axios: gắn token, tự refresh khi 401, đổi lỗi thành `ApiError` | `frontend/lib/api/client.ts` |
+| Hàm gọi API theo nhóm | `frontend/lib/api/auth.ts`, `recipes.ts` |
+| Định dạng ngày, thời gian, phân trang | `frontend/lib/format.ts`, `pagination.ts` |
+| shadcn/ui (style radix-nova, màu cam) | `frontend/components.json`, `frontend/components/ui/` |
+| Store đăng nhập và giao diện (Zustand persist) | `frontend/store/auth-store.ts`, `ui-store.ts` |
+| Component chung: header, footer, phân trang, loading, lỗi, trống | `frontend/components/layout/`, `frontend/components/common/` |
+| Layout theo nhóm route | `app/(public)`, `app/(auth)`, `app/(dashboard)` |
+
+Trang công thức, chi tiết và trang quản lý dùng dữ liệu mẫu (`lib/mock-data.ts`); trang chủ, danh mục,
+đăng nhập, đăng ký và hồ sơ gọi API thật.
+
+```powershell
+cd frontend
+```
+```powershell
+npm run test:utils
+```

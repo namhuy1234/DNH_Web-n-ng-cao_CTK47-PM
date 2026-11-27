@@ -1,13 +1,37 @@
 "use client";
 
-export default function ErrorPage({ reset }: { error: Error; reset: () => void }) {
+import Link from "next/link";
+import { useEffect } from "react";
+import { RotateCcw } from "lucide-react";
+import { ErrorState } from "@/components/common/ErrorState";
+import { Button } from "@/components/ui/button";
+import { getErrorMessage } from "@/lib/api/errors";
+
+/** Error boundary chung; retry() tải lại dữ liệu của đoạn trang bị lỗi (Next.js 16.3+). */
+export default function ErrorPage({ error, retry }: { error: Error & { digest?: string }; retry: () => void }) {
+  useEffect(() => {
+    console.error(error);
+  }, [error]);
+
   return (
-    <main className="mx-auto max-w-4xl px-4 py-10">
-      <h1 className="mb-2 text-2xl font-bold">Đã có lỗi xảy ra</h1>
-      <p className="mb-6 text-gray-500">Không hiển thị được trang này. Vui lòng thử lại.</p>
-      <button type="button" onClick={reset} className="rounded-lg bg-orange-600 px-4 py-2 text-white">
-        Thử lại
-      </button>
+    <main className="container mx-auto px-4 py-20">
+      <ErrorState
+        title="Không hiển thị được trang này"
+        // Lỗi từ Server Component có digest; ở production Next.js thay message bằng câu tiếng Anh
+        // chung chung (không lộ chi tiết), nên hiện câu tiếng Việt và giữ mã lỗi để tra log.
+        message={error.digest ? "Máy chủ gặp sự cố khi hiển thị trang. Vui lòng thử lại sau." : getErrorMessage(error)}
+        action={
+          <div className="flex gap-2">
+            <Button size="sm" onClick={() => retry()}>
+              <RotateCcw /> Thử lại
+            </Button>
+            <Button asChild size="sm" variant="outline">
+              <Link href="/">Về trang chủ</Link>
+            </Button>
+          </div>
+        }
+      />
+      {error.digest && <p className="mt-4 text-center text-xs text-muted-foreground">Mã lỗi: {error.digest}</p>}
     </main>
   );
 }

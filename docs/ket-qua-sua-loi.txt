@@ -1,0 +1,15 @@
+Kiem tra cac loi da sua tren trinh duyet (Playwright) - chay ngay 27/11/2026 20:48
+
+DAT  redirect=/\evil.com bị chặn, về /dashboard  (http://localhost:3000/dashboard)
+DAT  redirect=/dashboard/profile hoạt động
+DAT  Đổi sang admin: hồ sơ và store là của admin  (admin@culinaryblog.local)
+DAT  Tab khác thấy đăng xuất ngay
+DAT  Tab khác thấy đăng nhập ngay
+DAT  Mất mạng khi refresh: vẫn giữ phiên  (refreshToken còn)
+DAT  Có mạng lại: tự refresh và tải được hồ sơ
+DAT  Refresh token sai (401): đăng xuất
+DAT  Tìm kiếm giữ từ khóa và lựa chọn  (banh | Dễ | Sắp xếp: nấu nhanh nhất)
+DAT  Lọc độ khó được áp dụng  (2 kết quả)
+DAT  Chỉ chọn độ khó vẫn tìm được
+DAT  Menu điện thoại đóng khi bấm Back
+Tong: 12/12 dat
