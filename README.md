@@ -1,4 +1,4 @@
-# Culinary Blog – Backend (Lab 4)
+# Culinary Blog – Lab 5
 
 Backend .NET 10 theo Clean Architecture, cơ sở dữ liệu PostgreSQL 16.
 
@@ -77,8 +77,51 @@ mật khẩu ở mục `Seed:Password` trong `appsettings.Development.json`.
 
 Đăng nhập Google cần điền `Google:ClientId`. Ảnh đang lưu trên đĩa (`uploads/`), chưa dùng MinIO.
 
-Kiểm thử (cần Python 3; chạy API trước, ở cửa sổ khác):
+## Lab 5: bảo mật, tài liệu API, frontend
+
+- CORS chỉ cho origin trong `Cors:AllowedOrigins` (mặc định `http://localhost:3000`).
+- Rate limit mỗi phút theo IP: chung 100, `/auth` 10, tải ảnh 5 (mục `RateLimiting`).
+- Tài liệu API (chỉ Development): http://localhost:5000/scalar/v1 và `/openapi/v1.json`.
+- Versioning theo đường dẫn `/api/v1`.
+
+### Frontend (cần Node.js 20.9 trở lên)
 
 ```powershell
-python scripts\test_api.py
+cd frontend
 ```
+```powershell
+npm install
+```
+```powershell
+Copy-Item .env.example .env.local
+```
+```powershell
+npm run dev
+```
+
+Mở http://localhost:3000. Đối chiếu kiểu TypeScript với API đang chạy: `npm run check:api`.
+
+### Kiểm thử backend (cần Python 3)
+
+Bảo mật và tài liệu: chạy API bình thường rồi `python scripts	est_security.py`.
+
+Chức năng: nới rate limit trước khi chạy API, vì bộ này gửi rất nhiều request:
+
+```powershell
+$env:RateLimiting__General=100000; $env:RateLimiting__Auth=100000; $env:RateLimiting__Upload=100000
+```
+```powershell
+dotnet run --project src/CulinaryBlog.API
+```
+```powershell
+python scripts	est_api.py
+```
+
+## Unit test và CI
+
+```powershell
+dotnet test CulinaryBlog.slnx
+```
+
+Gồm test quy tắc nghiệp vụ, validator và Dependency Rule của Clean Architecture.
+GitHub Actions (`.github/workflows/ci.yml`) build, test backend và kiểm tra frontend mỗi lần đẩy nhánh `huy-*`.

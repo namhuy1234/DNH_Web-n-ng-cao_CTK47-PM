@@ -1,0 +1,12 @@
+﻿Doi chieu kieu TypeScript voi phan hoi that cua API - 27/11/2026 17:40
+Lenh: npm run check:api
+
+Khop kieu: 8/8 phan hoi that tu API
+  [DAT] CategoryDto[]
+  [DAT] CategoryDetailDto
+  [DAT] PagedResult<RecipeSummaryDto>
+  [DAT] RecipeDetailDto
+  [DAT] AuthResponseDto
+  [DAT] UserProfileDto
+  [DAT] ProblemDetails
+  [DAT] ProblemDetails

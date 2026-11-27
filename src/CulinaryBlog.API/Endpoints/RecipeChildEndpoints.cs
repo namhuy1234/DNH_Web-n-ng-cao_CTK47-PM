@@ -10,7 +10,7 @@ public static class RecipeChildEndpoints
 {
     public static void MapRecipeChildEndpoints(this IEndpointRouteBuilder app)
     {
-        var recipe = app.MapGroup("/api/v1/recipes/{id:guid}").RequireAuthorization(AuthSetup.AuthorPolicy);
+        var recipe = app.MapGroup("/recipes/{id:guid}").RequireAuthorization(AuthSetup.AuthorPolicy);
 
         // ----- Nguyên liệu -----
         var ingredients = recipe.MapGroup("/ingredients").WithTags("Ingredients");
@@ -56,7 +56,9 @@ public static class RecipeChildEndpoints
                 bool.TryParse(form["isPrimary"], out var primary) && primary), ct);
 
             return Results.Json(image, statusCode: 201);
-        });
+        })
+        .RequireRateLimiting(RateLimitSetup.UploadPolicy)
+        .Accepts<IFormFile>("multipart/form-data");
         images.MapPatch("/{imageId:guid}", async (
             Guid id, Guid imageId, UpdateImageRequest r, ISender sender, CancellationToken ct) =>
             Results.Ok(await sender.Send(

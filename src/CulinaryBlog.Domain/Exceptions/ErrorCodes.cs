@@ -10,6 +10,7 @@ public static class ErrorCodes
     public const string RecipePublishIncomplete = "RECIPE_PUBLISH_INCOMPLETE";
     public const string ConcurrencyConflict = "RECIPE_CONCURRENCY_CONFLICT";
     public const string DuplicateValue = "DUPLICATE_VALUE";
+    public const string RateLimitExceeded = "RATE_LIMIT_EXCEEDED";
     public const string AuthEmailExists = "AUTH_EMAIL_EXISTS";
     public const string AuthInvalidCredentials = "AUTH_INVALID_CREDENTIALS";
     public const string AuthAccountLocked = "AUTH_ACCOUNT_LOCKED";

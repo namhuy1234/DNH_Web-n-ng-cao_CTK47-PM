@@ -13,7 +13,7 @@ public static class RecipeEndpoints
 {
     public static void MapRecipeEndpoints(this IEndpointRouteBuilder app)
     {
-        var group = app.MapGroup("/api/v1/recipes").WithTags("Recipes");
+        var group = app.MapGroup("/recipes").WithTags("Recipes");
 
         group.MapGet("/", async (
             ISender sender, CancellationToken ct,

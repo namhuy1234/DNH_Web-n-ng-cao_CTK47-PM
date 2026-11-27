@@ -1,3 +1,4 @@
+using CulinaryBlog.API.Services;
 using CulinaryBlog.Application.Auth;
 using MediatR;
 
@@ -7,7 +8,7 @@ public static class AuthEndpoints
 {
     public static void MapAuthEndpoints(this IEndpointRouteBuilder app)
     {
-        var group = app.MapGroup("/api/v1/auth").WithTags("Auth");
+        var group = app.MapGroup("/auth").WithTags("Auth").RequireRateLimiting(RateLimitSetup.AuthPolicy);
 
         group.MapPost("/register", async (RegisterCommand command, ISender sender, CancellationToken ct) =>
             Results.Created("/api/v1/auth/me", await sender.Send(command, ct)));

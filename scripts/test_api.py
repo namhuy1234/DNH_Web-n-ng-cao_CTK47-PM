@@ -1,4 +1,6 @@
-"""Kiểm thử toàn bộ API (Lab 4). Chạy API trước: dotnet run --project src/CulinaryBlog.API
+"""Kiểm thử chức năng toàn bộ API. Bộ này gửi nhiều request nên phải nới giới hạn khi chạy API:
+$env:RateLimiting__General=100000; $env:RateLimiting__Auth=100000; $env:RateLimiting__Upload=100000
+dotnet run --project src/CulinaryBlog.API
 Kết quả ghi vào docs/ket-qua-api.txt. Dữ liệu tạo ra được xóa sau khi chạy."""
 import json
 import shutil
@@ -265,3 +267,5 @@ finally:
     (ROOT / 'docs').mkdir(exist_ok=True)
     (ROOT / 'docs/ket-qua-api.txt').write_text('\n'.join(header + lines) + '\n', encoding='utf-8-sig')
     print('\n'.join(header + lines))
+
+sys.exit(1 if failed else 0)
