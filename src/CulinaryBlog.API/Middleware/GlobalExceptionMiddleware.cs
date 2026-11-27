@@ -2,6 +2,7 @@ using System.Diagnostics;
 using CulinaryBlog.Domain.Exceptions;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
+using Npgsql;
 
 namespace CulinaryBlog.API.Middleware;
 
@@ -37,8 +38,27 @@ public class GlobalExceptionMiddleware(RequestDelegate next, ILogger<GlobalExcep
         }
     }
 
+    // PostgreSQL không lưu được ký tự NUL (mã lỗi 22021); lỗi có thể bị bọc nhiều lớp.
+    private static bool HasInvalidCharacter(Exception? exception)
+    {
+        for (; exception is not null; exception = exception.InnerException)
+        {
+            if (exception is PostgresException { SqlState: PostgresErrorCodes.CharacterNotInRepertoire })
+                return true;
+        }
+
+        return false;
+    }
+
     private static ProblemDetails Map(Exception exception) => exception switch
     {
+        _ when HasInvalidCharacter(exception) => new ProblemDetails
+        {
+            Type = ErrorCodes.ValidationError,
+            Title = "Dữ liệu không hợp lệ",
+            Status = StatusCodes.Status422UnprocessableEntity,
+            Detail = "Dữ liệu chứa ký tự không được phép."
+        },
         ValidationException ex => new ValidationProblemDetails(ex.Errors
             .GroupBy(e => char.ToLowerInvariant(e.PropertyName[0]) + e.PropertyName[1..])
             .ToDictionary(g => g.Key, g => g.Select(e => e.ErrorMessage).ToArray()))

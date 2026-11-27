@@ -92,7 +92,14 @@ public class Recipe : BaseEntity
         => _ingredients.FirstOrDefault(i => i.Id == id)
            ?? throw new NotFoundException(ErrorCodes.IngredientNotFound, "Không tìm thấy nguyên liệu.");
 
-    public void RemoveIngredient(RecipeIngredient ingredient) => _ingredients.Remove(ingredient);
+    public void RemoveIngredient(RecipeIngredient ingredient)
+    {
+        if (Status == RecipeStatus.Published && _ingredients.Count == 1)
+            throw new BusinessRuleException(ErrorCodes.RecipePublishIncomplete,
+                "Công thức đã công khai phải còn ít nhất 1 nguyên liệu.");
+
+        _ingredients.Remove(ingredient);
+    }
 
     // ----- Bước làm -----
     public RecipeStep AddStep(string title, string description, int? timerMinutes = null, string? imageUrl = null)
