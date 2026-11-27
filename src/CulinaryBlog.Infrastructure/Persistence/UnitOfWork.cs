@@ -11,6 +11,13 @@ public class UnitOfWork(CulinaryBlogDbContext db, ICategoryRepository categories
     public ICategoryRepository Categories { get; } = categories;
     public IRecipeRepository Recipes { get; } = recipes;
 
+    public async Task ExecuteInTransactionAsync(Func<Task> action, CancellationToken cancellationToken = default)
+    {
+        await using var transaction = await db.Database.BeginTransactionAsync(cancellationToken);
+        await action();
+        await transaction.CommitAsync(cancellationToken);
+    }
+
     public async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {
         try

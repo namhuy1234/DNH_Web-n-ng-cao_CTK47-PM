@@ -16,6 +16,16 @@ public class RecipeStep : BaseEntity
         ImageUrl = imageUrl;
     }
 
+    public void Update(string title, string description, int? timerMinutes, string? imageUrl)
+    {
+        Title = title;
+        Description = description;
+        TimerMinutes = timerMinutes;
+        ImageUrl = imageUrl;
+    }
+
+    internal void SetNumber(int number) => StepNumber = number;
+
     public Guid RecipeId { get; private set; }
     public Recipe Recipe { get; private set; } = null!;
     public int StepNumber { get; private set; }

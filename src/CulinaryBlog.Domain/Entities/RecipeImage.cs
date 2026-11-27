@@ -15,6 +15,14 @@ public class RecipeImage : BaseEntity
         OrderIndex = orderIndex;
     }
 
+    public void Update(string? altText, int orderIndex)
+    {
+        AltText = altText;
+        OrderIndex = orderIndex;
+    }
+
+    public void SetPrimary(bool isPrimary) => IsPrimary = isPrimary;
+
     public Guid RecipeId { get; private set; }
     public Recipe Recipe { get; private set; } = null!;
     public string OriginalUrl { get; private set; } = null!;

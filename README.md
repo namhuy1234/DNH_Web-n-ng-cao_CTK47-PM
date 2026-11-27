@@ -1,4 +1,4 @@
-# Culinary Blog – Backend (Lab 3)
+# Culinary Blog – Backend (Lab 4)
 
 Backend .NET 10 theo Clean Architecture, cơ sở dữ liệu PostgreSQL 16.
 
@@ -58,20 +58,27 @@ docker compose down -v
 - Mật khẩu trong `appsettings.Development.json` và `docker-compose.yml` chỉ dùng cho máy phát triển.
 - Dữ liệu mẫu sinh ngẫu nhiên nên nguyên liệu và các bước không nhất thiết đúng với món ăn thật.
 
-## Lab 3: API
+## Lab 4: toàn bộ API (tiền tố /api/v1)
 
-| Method | Đường dẫn | Mô tả |
+| Nhóm | Endpoint | Quyền |
 |---|---|---|
-| GET | `/api/v1/categories` | Danh sách danh mục kèm số công thức đã công khai |
-| POST | `/api/v1/categories` | Tạo danh mục (chưa kiểm tra quyền Admin) |
-| GET | `/api/v1/recipes` | Danh sách công thức: `page`, `pageSize`, `categoryId`, `difficulty`, `sort` |
-| GET | `/api/v1/recipes/{slug}` | Chi tiết công thức |
+| Auth | `POST /auth/register`, `/login`, `/google`, `/refresh` | Không |
+| Auth | `POST /auth/logout`, `GET /auth/me`, `PATCH /auth/me` | Đăng nhập |
+| Danh mục | `GET /categories`, `GET /categories/{slug}` | Không |
+| Danh mục | `POST /categories`, `PUT`/`DELETE /categories/{id}` | Admin |
+| Công thức | `GET /recipes`, `/recipes/search`, `/recipes/{slug}` | Không (bản nháp: chủ bài, Admin) |
+| Công thức | `POST /recipes`, `PUT`/`DELETE /recipes/{id}`, `PATCH .../publish`, `unpublish`, `archive` | Chủ bài, Admin |
+| Nguyên liệu, bước | `POST`, `PUT`, `DELETE /recipes/{id}/ingredients`, `/steps` | Chủ bài, Admin |
+| Ảnh | `POST`, `PATCH`, `DELETE /recipes/{id}/images` | Chủ bài, Admin |
+| Health (không có tiền tố) | `GET /health`, `/health/live`, `/health/ready` | Không |
 
-Lỗi trả về dạng Problem Details: 400 sai định dạng, 403 chưa công khai, 404 không tìm thấy,
-409 trùng dữ liệu, 422 dữ liệu không hợp lệ, 500 lỗi hệ thống.
+Tài khoản mẫu (chỉ máy phát triển): `admin@culinaryblog.local`, `author1@culinaryblog.local`;
+mật khẩu ở mục `Seed:Password` trong `appsettings.Development.json`.
 
-Kiểm thử (chạy API trước, ở một cửa sổ PowerShell khác):
+Đăng nhập Google cần điền `Google:ClientId`. Ảnh đang lưu trên đĩa (`uploads/`), chưa dùng MinIO.
+
+Kiểm thử (cần Python 3; chạy API trước, ở cửa sổ khác):
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File scripts\test-api.ps1
+python scripts\test_api.py
 ```

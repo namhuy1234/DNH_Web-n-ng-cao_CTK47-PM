@@ -1,55 +1,93 @@
-﻿Ket qua kiem thu API - chay ngay 27/11/2026 16:42
-Dat 13/13 truong hop
+﻿Ket qua kiem thu API - chay ngay 27/11/2026 17:04
+Dat 74/74 truong hop
+Du lieu sau khi don: 24 danh muc, 120 cong thuc
 
-[DAT] GET /api/v1/categories
-      -> 200 (mong doi 200)  application/json; charset=utf-8
-      [{"id":"5f6e5827-0de5-4294-9013-d326663dd2b8","name":"Bánh mặn","slug":"banh-man","description":"Tổng hợp công thức bánh mặn dễ làm tại nhà.","imageUrl":null,"recipeCount":4},{"id":"d774fee9-ea44-4d64-b459-af6a3d21c432","name":"Bá...
+== Health checks ==
+[DAT] 200 GET    /health
+[DAT] 200 GET    /health/live
+[DAT] 200 GET    /health/ready
 
-[DAT] POST /api/v1/categories  {"name":"Mon thu Lab3 164232","description":"Du lieu kiem thu"}
-      -> 201 (mong doi 201)  application/json; charset=utf-8
-      {"id":"f459d60d-aa01-4274-8d03-03ce6b9c372f","name":"Mon thu Lab3 164232","slug":"mon-thu-lab3-164232","description":"Du lieu kiem thu","imageUrl":null,"recipeCount":0}
+== Xac thuc (/auth) ==
+[DAT] 201 POST   /auth/register
+[DAT] 409 POST   /auth/register (email trung)  AUTH_EMAIL_EXISTS
+[DAT] 422 POST   /auth/register (mat khau yeu)  VALIDATION_ERROR
+[DAT] 200 POST   /auth/login
+[DAT] 401 POST   /auth/login (sai mat khau)  AUTH_INVALID_CREDENTIALS
+[DAT] 401 GET    /auth/me (khong token)
+[DAT] 401 GET    /auth/me (token gia)
+[DAT] 200 GET    /auth/me
+[DAT] 200 PATCH  /auth/me
+[DAT] 422 PATCH  /auth/me (avatarUrl sai)  VALIDATION_ERROR
+[DAT] 200 POST   /auth/refresh
+[DAT] 401 POST   /auth/refresh (dung lai token cu)  AUTH_REFRESH_TOKEN_REVOKED
+[DAT] 401 POST   /auth/refresh (token cung chuoi bi thu hoi)  AUTH_REFRESH_TOKEN_REVOKED
+[DAT] 204 POST   /auth/logout
+[DAT] 401 POST   /auth/refresh (sau khi logout)  AUTH_REFRESH_TOKEN_REVOKED
+[DAT] 401 POST   /auth/google (token sai)  AUTH_GOOGLE_TOKEN_INVALID
+[DAT] 423 POST   /auth/login (sai lan thu 5: khoa)  AUTH_ACCOUNT_LOCKED
 
-[DAT] POST /api/v1/categories  {"name":"Mon thu Lab3 164232"}
-      -> 409 (mong doi 409)  application/problem+json
-      {"type":"CATEGORY_NAME_EXISTS","title":"Xung đột dữ liệu","status":409,"detail":"Danh mục 'Mon thu Lab3 164232' đã tồn tại.","instance":"/api/v1/categories","traceId":"00-b49a2b7b01711bdca37feafbea6d4c4d-4d3ecc8677063be5-00"}
+== Danh muc (/categories) ==
+[DAT] 200 GET    /categories
+[DAT] 200 GET    /categories/{slug}
+[DAT] 404 GET    /categories/{slug} (khong co)  CATEGORY_NOT_FOUND
+[DAT] 401 POST   /categories (khong token)
+[DAT] 403 POST   /categories (vai tro Author)
+[DAT] 201 POST   /categories (Admin)
+[DAT] 200 PUT    /categories/{id}
+[DAT] 409 PUT    /categories/{id} (trung ten)  CATEGORY_NAME_EXISTS
+[DAT] 409 DELETE /categories/{id} (con cong thuc)  CATEGORY_DELETE_HAS_RECIPES
+[DAT] 204 DELETE /categories/{id}
 
-[DAT] POST /api/v1/categories  {"name":"a"}
-      -> 422 (mong doi 422)  application/problem+json
-      {"type":"VALIDATION_ERROR","title":"Dữ liệu không hợp lệ","status":422,"instance":"/api/v1/categories","errors":{"name":["Tên danh mục dài từ 2 đến 50 ký tự."]},"traceId":"00-c07ef85c55a709c0214694b1c16dd379-13b7e5e90a7b7e29-00"}
+== Cong thuc (/recipes) ==
+[DAT] 200 GET    /recipes
+[DAT] 200 GET    /recipes/search?q=banh bong (khong dau)
+[DAT] 422 GET    /recipes/search (tu khoa qua ngan)  VALIDATION_ERROR
+[DAT] 200 GET    /recipes/search (ky tu dac biet)
+[DAT] 401 POST   /recipes (khong token)
+[DAT] 422 POST   /recipes (du lieu sai)  VALIDATION_ERROR
+[DAT] 201 POST   /recipes
+[DAT] 403 GET    /recipes/{slug} (khach xem ban nhap)  RECIPE_FORBIDDEN
+[DAT] 200 GET    /recipes/{slug} (tac gia xem ban nhap)
+[DAT] 403 PUT    /recipes/{id} (tac gia khac)  RECIPE_FORBIDDEN
+[DAT] 200 PUT    /recipes/{id}
+[DAT] 409 PUT    /recipes/{id} (rowVersion cu)  RECIPE_CONCURRENCY_CONFLICT
+[DAT] 422 PATCH  /recipes/{id}/publish (chua co buoc)  RECIPE_PUBLISH_INCOMPLETE
 
-[DAT] POST /api/v1/categories  {"name":
-      -> 400 (mong doi 400)  application/problem+json
-      {"type":"BAD_REQUEST","title":"Yêu cầu không hợp lệ","status":400,"detail":"Tham số hoặc nội dung JSON sai định dạng.","instance":"/api/v1/categories","traceId":"00-6625e9d4dc5d8b75d5f8263592fed038-33b466db35cf441a-00"}
+== Nguyen lieu (/recipes/{id}/ingredients) ==
+[DAT] 201 POST   /ingredients
+[DAT] 422 POST   /ingredients (quantity am)  VALIDATION_ERROR
+[DAT] 200 PUT    /ingredients/{ingId}
+[DAT] 204 DELETE /ingredients/{ingId}
+[DAT] 404 DELETE /ingredients/{ingId} (da xoa)  INGREDIENT_NOT_FOUND
 
-[DAT] GET /api/v1/recipes?page=1&pageSize=2
-      -> 200 (mong doi 200)  application/json; charset=utf-8
-      {"items":[{"id":"420382e8-e41e-472e-9944-dcac0bb5e102","title":"Chè ba màu kiểu nhà làm","slug":"che-ba-mau-kieu-nha-lam","description":"Chè ba màu kiểu nhà làm là món thuộc nhóm chè và tráng miệng, nguyên liệu dễ tìm, cách làm rõ...
+== Buoc thuc hien (/recipes/{id}/steps) ==
+[DAT] 201 POST   /steps (them B)
+[DAT] 201 POST   /steps (them C)
+[DAT] 201 POST   /steps (them D)
+[DAT] 201 POST   /steps (chen vao vi tri 1)
+[DAT] 200 PUT    /steps/{stepId} (chuyen D len 2)
+[DAT] 200 GET    /recipes/{slug} (thu tu A,D,B,C)
+[DAT] 204 DELETE /steps/{stepId}
+[DAT] 200 GET    /recipes/{slug} (tu danh so lai 1,2,3)
+[DAT] 200 GET    /recipes/{slug} (them sau xoa khong trung so)
 
-[DAT] GET /api/v1/recipes?difficulty=Easy&sort=title&pageSize=1
-      -> 200 (mong doi 200)  application/json; charset=utf-8
-      {"items":[{"id":"4855f637-197f-4793-a24b-f22417ebf122","title":"Bánh bông lan trứng muối thơm ngon","slug":"banh-bong-lan-trung-muoi-thom-ngon","description":"Bánh bông lan trứng muối thơm ngon là món thuộc nhóm bánh ngọt, nguyên ...
+== Anh (/recipes/{id}/images) ==
+[DAT] 201 POST   /images
+[DAT] 201 POST   /images (dat lam anh chinh)
+[DAT] 400 POST   /images (file gia mao)  FILE_MIME_INVALID
+[DAT] 400 POST   /images (sai loai)  FILE_MIME_INVALID
+[DAT] 400 POST   /images (qua 5MB)  FILE_SIZE_EXCEEDED
+[DAT] 200 GET    /uploads/... (tai anh)
+[DAT] 200 PATCH  /images/{imgId}
+[DAT] 204 DELETE /images/{imgId}
+[DAT] 200 GET    /recipes/{slug} (anh con lai len lam chinh)
 
-[DAT] GET /api/v1/recipes?page=0&pageSize=100
-      -> 422 (mong doi 422)  application/problem+json
-      {"type":"VALIDATION_ERROR","title":"Dữ liệu không hợp lệ","status":422,"instance":"/api/v1/recipes","errors":{"page":["page phải từ 1 đến 10000."],"pageSize":["pageSize phải từ 1 đến 50."]},"traceId":"00-4c3659f4c4e8a4d54bc5ff4cbe...
-
-[DAT] GET /api/v1/recipes?page=abc
-      -> 400 (mong doi 400)  application/problem+json
-      {"type":"BAD_REQUEST","title":"Yêu cầu không hợp lệ","status":400,"detail":"Tham số hoặc nội dung JSON sai định dạng.","instance":"/api/v1/recipes","traceId":"00-a4292498c8f530ced98782668fb479d2-d0282406b776e2c3-00"}
-
-[DAT] GET /api/v1/recipes/che-ba-mau-kieu-nha-lam
-      -> 200 (mong doi 200)  application/json; charset=utf-8
-      {"id":"420382e8-e41e-472e-9944-dcac0bb5e102","title":"Chè ba màu kiểu nhà làm","slug":"che-ba-mau-kieu-nha-lam","description":"Chè ba màu kiểu nhà làm là món thuộc nhóm chè và tráng miệng, nguyên liệu dễ tìm, cách làm rõ ràng, phù...
-
-[DAT] GET /api/v1/recipes/khong-ton-tai
-      -> 404 (mong doi 404)  application/problem+json
-      {"type":"RECIPE_NOT_FOUND","title":"Không tìm thấy","status":404,"detail":"Không tìm thấy công thức 'khong-ton-tai'.","instance":"/api/v1/recipes/khong-ton-tai","traceId":"00-eb26bb972c9df9360c84ea803b1ecd84-5bd9b456fc824989-00"}
-
-[DAT] GET /api/v1/recipes/ga-sot-cay-han-quoc-thom-ngon
-      -> 403 (mong doi 403)  application/problem+json
-      {"type":"RECIPE_FORBIDDEN","title":"Không có quyền","status":403,"detail":"Công thức chưa được công khai.","instance":"/api/v1/recipes/ga-sot-cay-han-quoc-thom-ngon","traceId":"00-895870d3fcf168aa7b1d06e740a1391f-6d49dbe0e52b2f0a-...
-
-[DAT] GET /api/v1/khong-co
-      -> 404 (mong doi 404)  application/problem+json
-      {"type":"https://tools.ietf.org/html/rfc9110#section-15.5.5","title":"Not Found","status":404,"traceId":"00-51ec03fb1aad7d0c881ffde3fb992b44-d61fad0e6ca591f6-00"}
-
+== Trang thai va xoa cong thuc ==
+[DAT] 200 PATCH  /recipes/{id}/publish
+[DAT] 200 PATCH  /recipes/{id}/publish (goi lai, giu ngay cu)
+[DAT] 200 GET    /recipes/{slug} (khach xem bai cong khai)
+[DAT] 200 PATCH  /recipes/{id}/unpublish
+[DAT] 200 PATCH  /recipes/{id}/archive (Admin)
+[DAT] 403 DELETE /recipes/{id} (tac gia khac)  RECIPE_FORBIDDEN
+[DAT] 204 DELETE /recipes/{id}
+[DAT] 404 GET    /recipes/{slug} (da xoa mem)  RECIPE_NOT_FOUND

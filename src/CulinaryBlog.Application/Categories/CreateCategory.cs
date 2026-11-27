@@ -32,7 +32,7 @@ public class CreateCategoryHandler(IUnitOfWork unitOfWork) : IRequestHandler<Cre
     {
         var name = request.Name.Trim();
 
-        if (await unitOfWork.Categories.NameExistsAsync(name, cancellationToken))
+        if (await unitOfWork.Categories.NameExistsAsync(name, cancellationToken: cancellationToken))
             throw new ConflictException(ErrorCodes.CategoryNameExists, $"Danh mục '{name}' đã tồn tại.");
 
         // Trùng slug thì thêm hậu tố -2, -3...

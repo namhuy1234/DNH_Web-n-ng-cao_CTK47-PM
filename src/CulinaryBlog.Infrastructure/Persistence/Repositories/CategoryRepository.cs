@@ -15,8 +15,15 @@ public class CategoryRepository(CulinaryBlogDbContext db) : Repository<Category>
             .ToListAsync(cancellationToken);
 
     // Index unique tính cả bản ghi đã xóa mềm nên phải bỏ query filter khi kiểm tra trùng.
-    public Task<bool> NameExistsAsync(string name, CancellationToken cancellationToken = default)
-        => Set.IgnoreQueryFilters().AnyAsync(c => c.Name.ToLower() == name.ToLower(), cancellationToken);
+    public Task<bool> NameExistsAsync(string name, Guid? excludeId = null, CancellationToken cancellationToken = default)
+        => Set.IgnoreQueryFilters()
+            .AnyAsync(c => c.Id != excludeId && c.Name.ToLower() == name.ToLower(), cancellationToken);
+
+    public Task<Category?> GetBySlugAsync(string slug, CancellationToken cancellationToken = default)
+        => Set.AsNoTracking().FirstOrDefaultAsync(c => c.Slug == slug, cancellationToken);
+
+    public Task<int> CountRecipesAsync(Guid categoryId, CancellationToken cancellationToken = default)
+        => Db.Recipes.CountAsync(r => r.CategoryId == categoryId, cancellationToken);
 
     public Task<bool> SlugExistsAsync(string slug, CancellationToken cancellationToken = default)
         => Set.IgnoreQueryFilters().AnyAsync(c => c.Slug == slug, cancellationToken);

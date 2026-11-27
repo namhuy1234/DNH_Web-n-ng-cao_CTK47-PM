@@ -482,3 +482,5 @@ $RECYCLE.BIN/
 *.swp
 
 docs/*.docx
+
+src/CulinaryBlog.API/uploads/

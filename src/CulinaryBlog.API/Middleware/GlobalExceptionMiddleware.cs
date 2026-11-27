@@ -50,6 +50,14 @@ public class GlobalExceptionMiddleware(RequestDelegate next, ILogger<GlobalExcep
         NotFoundException ex => Create(StatusCodes.Status404NotFound, "Không tìm thấy", ex),
         ConflictException ex => Create(StatusCodes.Status409Conflict, "Xung đột dữ liệu", ex),
         ForbiddenException ex => Create(StatusCodes.Status403Forbidden, "Không có quyền", ex),
+        UnauthorizedException ex => Create(StatusCodes.Status401Unauthorized, "Chưa xác thực", ex),
+        LockedException ex => Create(StatusCodes.Status423Locked, "Tài khoản bị khóa", ex),
+        BadRequestException ex => Create(StatusCodes.Status400BadRequest, "Yêu cầu không hợp lệ", ex),
+        InvalidDataException => new ProblemDetails
+        {
+            Type = "BAD_REQUEST", Title = "Yêu cầu không hợp lệ", Status = StatusCodes.Status400BadRequest,
+            Detail = "Dữ liệu form sai định dạng hoặc quá lớn."
+        },
         DomainException ex => Create(StatusCodes.Status422UnprocessableEntity, "Vi phạm quy tắc nghiệp vụ", ex),
         BadHttpRequestException ex => new ProblemDetails
         {
