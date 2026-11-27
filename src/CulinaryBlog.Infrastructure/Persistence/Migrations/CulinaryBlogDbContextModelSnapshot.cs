@@ -74,11 +74,13 @@ namespace CulinaryBlog.Infrastructure.Persistence.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("Name")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasFilter("\"IsDeleted\" = false");
 
                     b.HasIndex("Slug")
                         .IsUnique()
-                        .HasDatabaseName("IDX_Category_Slug");
+                        .HasDatabaseName("IDX_Category_Slug")
+                        .HasFilter("\"IsDeleted\" = false");
 
                     b.ToTable("Categories", (string)null);
                 });

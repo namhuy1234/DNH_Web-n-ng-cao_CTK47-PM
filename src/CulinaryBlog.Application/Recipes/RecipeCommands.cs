@@ -80,6 +80,10 @@ public class CreateRecipeValidator : AbstractValidator<CreateRecipeCommand>
         RuleFor(x => x.Steps).Must(list => list is null || list.Count <= 100).WithMessage("Tối đa 100 bước.");
         RuleForEach(x => x.Ingredients).NotNull().SetValidator(new IngredientInputValidator());
         RuleForEach(x => x.Steps).NotNull().SetValidator(new StepInputValidator());
+        RuleFor(x => x.Steps)
+            .Must(list => list!.Where(s => s?.StepNumber is not null).GroupBy(s => s.StepNumber).All(g => g.Count() == 1))
+            .WithMessage("stepNumber không được trùng nhau.")
+            .When(x => x.Steps is not null);
     }
 }
 
@@ -106,7 +110,12 @@ public class CreateRecipeHandler(IUnitOfWork unitOfWork, ICurrentUser currentUse
 
         foreach (var i in request.Ingredients ?? [])
             recipe.AddIngredient(i.Name.Trim(), i.Quantity, i.Unit, i.Notes, i.OrderIndex);
-        foreach (var s in request.Steps ?? [])
+        // Sắp theo stepNumber nếu có (không có thì lấy vị trí gửi lên), sau đó đánh số liên tục từ 1.
+        var steps = (request.Steps ?? [])
+            .Select((step, index) => (step, position: step.StepNumber ?? index + 1))
+            .OrderBy(x => x.position)
+            .Select(x => x.step);
+        foreach (var s in steps)
             recipe.AddStep(s.Title.Trim(), s.Description, s.TimerMinutes, s.ImageUrl);
 
         await unitOfWork.Recipes.AddAsync(recipe, cancellationToken);

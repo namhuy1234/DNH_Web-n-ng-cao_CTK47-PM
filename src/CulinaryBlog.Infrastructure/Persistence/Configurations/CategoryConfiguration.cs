@@ -16,7 +16,9 @@ public class CategoryConfiguration : IEntityTypeConfiguration<Category>
         builder.Property(x => x.ImageUrl).HasMaxLength(500);
         builder.Property(x => x.OrderIndex).HasDefaultValue(0);
 
-        builder.HasIndex(x => x.Name).IsUnique();
-        builder.HasIndex(x => x.Slug).IsUnique().HasDatabaseName("IDX_Category_Slug");
+        // Chỉ bắt trùng giữa các danh mục chưa xóa, để tên đã xóa mềm dùng lại được.
+        builder.HasIndex(x => x.Name).IsUnique().HasFilter("\"IsDeleted\" = false");
+        builder.HasIndex(x => x.Slug).IsUnique().HasFilter("\"IsDeleted\" = false")
+            .HasDatabaseName("IDX_Category_Slug");
     }
 }
