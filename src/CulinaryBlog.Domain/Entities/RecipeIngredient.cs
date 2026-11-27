@@ -16,6 +16,15 @@ public class RecipeIngredient : BaseEntity
         OrderIndex = orderIndex;
     }
 
+    public void Update(string name, decimal? quantity, string? unit, string? notes, int orderIndex)
+    {
+        Name = name;
+        Quantity = quantity;
+        Unit = unit;
+        Notes = notes;
+        OrderIndex = orderIndex;
+    }
+
     public Guid RecipeId { get; private set; }
     public Recipe Recipe { get; private set; } = null!;
     public string Name { get; private set; } = null!;

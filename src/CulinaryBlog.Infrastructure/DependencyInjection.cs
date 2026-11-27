@@ -1,3 +1,8 @@
+using CulinaryBlog.Application.Auth;
+using CulinaryBlog.Application.Common;
+using CulinaryBlog.Infrastructure.Storage;
+using CulinaryBlog.Domain.Repositories;
+using CulinaryBlog.Infrastructure.Persistence.Repositories;
 using CulinaryBlog.Infrastructure.Identity;
 using CulinaryBlog.Infrastructure.Persistence;
 using CulinaryBlog.Infrastructure.Persistence.Interceptors;
@@ -31,6 +36,15 @@ public static class DependencyInjection
             .AddRoles<IdentityRole>()
             .AddEntityFrameworkStores<CulinaryBlogDbContext>();
 
+        services.AddScoped<ICategoryRepository, CategoryRepository>();
+        services.AddScoped<IRecipeRepository, RecipeRepository>();
+        services.AddScoped<IUnitOfWork, UnitOfWork>();
+        services.AddScoped<IUserReader, UserReader>();
+        services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
+        services.AddScoped<IIdentityService, IdentityService>();
+        services.AddScoped<ITokenService, TokenService>();
+        services.AddScoped<IGoogleTokenVerifier, GoogleTokenVerifier>();
+        services.AddScoped<IFileStorageService, LocalFileStorageService>();
         services.AddScoped<DbSeeder>();
 
         return services;

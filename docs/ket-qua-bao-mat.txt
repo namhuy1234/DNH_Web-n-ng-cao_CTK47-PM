@@ -1,0 +1,32 @@
+﻿Kiem thu bao mat va tai lieu API - chay ngay 27/11/2026 17:40
+Dat 18/18 truong hop
+
+== CORS ==
+[DAT] Preflight tu frontend duoc chap nhan                 204 Allow-Origin=http://localhost:3000
+[DAT] Origin la khong duoc cap header CORS                 200 Allow-Origin=None
+
+== Header bao mat ==
+[DAT] X-Content-Type-Options, X-Frame-Options              nosniff, DENY
+[DAT] Khong lo header Server                               Server=None
+[DAT] Phan hoi loi cung co header bao mat                  404 nosniff
+
+== Versioning ==
+[DAT] /api/v1 hoat dong va bao phien ban ho tro            200 api-supported-versions=1.0
+[DAT] /api/v2 chua ton tai                                 404
+
+== Tai lieu API ==
+[DAT] /openapi/v1.json co 30 endpoint /api/v1              200, 30 operation
+[DAT] Moi endpoint co mo ta                                30/30
+[DAT] Khai bao bao mat Bearer                              21 endpoint can token
+[DAT] Giao dien Scalar /scalar/v1                          200
+
+== Phan quyen ==
+[DAT] Ghi du lieu khi chua dang nhap                       401
+[DAT] Token gia                                            401
+
+== Rate limiting (cau hinh mac dinh) ==
+[DAT] /auth: qua 10 request/phut thi 429                   [401, 401, 401, 401, 401, 401, 401, 401, 401, 429, 429]
+[DAT] 429 co Retry-After va Problem Details                Retry-After=60
+[DAT] 429 van co header CORS                               http://localhost:3000
+[DAT] API chung: qua 100 request/phut thi 429              76 lan 200, 24 lan 429
+[DAT] Health check khong bi gioi han                       30/30 lan 200
