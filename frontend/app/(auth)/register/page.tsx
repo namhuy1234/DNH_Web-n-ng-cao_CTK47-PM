@@ -1,8 +1,13 @@
 import type { Metadata } from "next";
-import { AuthForm } from "@/components/auth/AuthForm";
+import { GuestOnly } from "@/components/auth/GuestOnly";
+import { RegisterForm } from "@/components/auth/RegisterForm";
 
 export const metadata: Metadata = { title: "Đăng ký" };
 
 export default function RegisterPage() {
-  return <AuthForm mode="register" />;
+  return (
+    <GuestOnly>
+      <RegisterForm />
+    </GuestOnly>
+  );
 }

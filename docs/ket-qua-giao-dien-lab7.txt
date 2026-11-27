@@ -1,0 +1,40 @@
+Kiem thu giao dien Lab 7 bang Playwright - chay ngay 27/11/2026 22:07
+Lenh: python scripts/test_lab7_ui.py
+
+DAT Trang chủ có header và footer
+DAT Sidebar hiện danh sách danh mục từ API  (24 danh mục)
+DAT Main content hiện 9 công thức mới  (9 thẻ)
+DAT Phân trang trang chủ đổi danh sách
+DAT Trang tất cả danh mục  (24 danh mục)
+DAT Trang danh mục: tiêu đề, công thức, mục đang chọn ở sidebar  (/categories/banh-man)
+DAT Chi tiết: tên món, nguyên liệu, cách làm  (/recipes/banh-khot-vung-tau-cho-ngay-cuoi-tuan)
+DAT Chi tiết: có các bước được đánh số
+DAT Chi tiết: đường dẫn và món cùng danh mục
+DAT Slug không tồn tại: hiện trang 404 và gắn noindex
+DAT Ô tìm ở header: 'pho' (không dấu) tìm được món có 'Phở'  (3 kết quả)
+DAT Ô từ khóa giữ lại giá trị
+DAT Không có kết quả thì báo rõ
+DAT Tìm chỉ bằng bộ lọc (không từ khóa) vẫn có kết quả
+DAT Trang vượt quá số trang có nút quay về trang cuối
+DAT Lọc độ khó Dễ ở danh sách công thức
+DAT Đăng ký: báo lỗi ngay ở trình duyệt (mật khẩu yếu, nhập lại không khớp)
+DAT Đăng ký thành công, vào trang quản lý
+DAT Đã đăng nhập mở /login thì bị chuyển đi
+DAT redirect trỏ về /login không gây vòng lặp
+DAT Đăng xuất
+DAT Đăng nhập lại
+DAT Hồ sơ: URL ảnh sai bị chặn
+DAT Hồ sơ: lưu thành công, tên trên header đổi ngay
+DAT Hồ sơ: tải lại trang vẫn giữ giá trị (đã lưu ở API)
+DAT Đổi mật khẩu: sai mật khẩu hiện tại báo dưới ô
+DAT Đổi mật khẩu thành công, vẫn đăng nhập
+DAT Quên mật khẩu: báo đã gửi email
+DAT MailHog nhận email có liên kết đặt lại  (http://localhost:3000/reset-password?email=ui-lab7)
+DAT Đặt lại mật khẩu xong chuyển về đăng nhập
+DAT Mật khẩu trước đó không còn dùng được
+DAT Đăng nhập bằng mật khẩu mới
+DAT Liên kết đã dùng không dùng lại được
+DAT Trang đặt lại thiếu token báo liên kết không hợp lệ
+DAT Không có lỗi JavaScript trên trang
+
+Tong: 35/35 dat

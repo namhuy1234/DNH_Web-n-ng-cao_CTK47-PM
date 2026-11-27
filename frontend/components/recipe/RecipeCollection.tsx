@@ -37,12 +37,12 @@ export function ViewModeToggle() {
  * Bọc danh sách thẻ (render sẵn ở server, truyền qua children) và chỉ đổi
  * cách xếp theo view mode, nên thẻ công thức vẫn là Server Component.
  */
-export function RecipeCollection({ children }: { children: React.ReactNode }) {
+export function RecipeCollection({ children, columns = 4 }: { children: React.ReactNode; columns?: 3 | 4 }) {
   const mode = useViewMode();
   return (
     <div
       data-view={mode}
-      className={cn("grid gap-6", mode === "grid" ? "sm:grid-cols-2 lg:grid-cols-4" : "grid-cols-1 sm:[&>[data-slot=card]]:flex-row sm:[&_[data-cover]]:aspect-auto sm:[&_[data-cover]]:w-56 sm:[&_[data-cover]]:shrink-0")}
+      className={cn("grid gap-6", mode === "grid" ? (columns === 3 ? "sm:grid-cols-2 xl:grid-cols-3" : "sm:grid-cols-2 lg:grid-cols-4") : "grid-cols-1 sm:[&>[data-slot=card]]:flex-row sm:[&_[data-cover]]:aspect-auto sm:[&_[data-cover]]:w-56 sm:[&_[data-cover]]:shrink-0")}
     >
       {children}
     </div>

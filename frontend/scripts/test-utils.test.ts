@@ -4,10 +4,16 @@ import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import { ApiError, getErrorMessage, getFieldErrors, toApiError } from "../lib/api/errors.ts";
 import { formatDate, formatDuration, getInitials } from "../lib/format.ts";
-import { MOCK_RECIPES } from "../lib/mock-data.ts";
 import { safeRedirect } from "../lib/navigation.ts";
 import { getPageItems, parsePage } from "../lib/pagination.ts";
-import { filterRecipes, normalizeText, parseRecipeFilters } from "../lib/recipe-search.ts";
+import { filterQuery, parseRecipeFilters } from "../lib/recipe-search.ts";
+import {
+  changePasswordSchema,
+  loginSchema,
+  profileSchema,
+  registerSchema,
+  resetPasswordSchema,
+} from "../lib/validation/auth.ts";
 
 function axiosError(status: number | undefined, data?: unknown, code?: string) {
   const config = { headers: new AxiosHeaders() };
@@ -83,6 +89,12 @@ describe("safeRedirect", () => {
     assert.equal(safeRedirect("/dashboard/profile"), "/dashboard/profile");
     assert.equal(safeRedirect("/recipes?page=2#top"), "/recipes?page=2#top");
   });
+  it("không quay lại trang đăng nhập/đăng ký (tránh vòng lặp)", () => {
+    for (const page of ["/login", "/register?x=1", "/forgot-password", "/reset-password?token=a", "/login/"]) {
+      assert.equal(safeRedirect(page), "/dashboard", page);
+    }
+    assert.equal(safeRedirect("/login-history"), "/login-history");
+  });
   it("chặn chuyển hướng ra ngoài", () => {
     for (const bad of ["//evil.com", "/\\evil.com", "https://evil.com", "javascript:alert(1)", "evil.com", "", null, undefined]) {
       assert.equal(safeRedirect(bad), "/dashboard", String(bad));
@@ -91,23 +103,64 @@ describe("safeRedirect", () => {
 });
 
 describe("recipe-search", () => {
-  it("normalizeText bỏ dấu và đ/Đ", () => assert.equal(normalizeText("Đặng Phở BÒ"), "dang pho bo"));
   it("parseRecipeFilters bỏ giá trị lạ", () => {
-    assert.deepEqual(parseRecipeFilters({ q: " pho ", difficulty: "all", sort: "xyz" }), {
+    assert.deepEqual(parseRecipeFilters({ q: " pho ", difficulty: "all", sort: "xyz", categoryId: "abc", page: "-1" }), {
       q: "pho",
+      categoryId: undefined,
       difficulty: undefined,
       sort: "-createdAt",
+      page: 1,
     });
     assert.equal(parseRecipeFilters({ difficulty: ["Hard", "Easy"] }).difficulty, "Hard");
   });
-  it("lọc theo từ khóa không dấu và độ khó, bỏ bản nháp", () => {
-    const byKeyword = filterRecipes(MOCK_RECIPES, { q: "banh", sort: "-createdAt" });
-    assert.ok(byKeyword.length > 0 && byKeyword.every((r) => normalizeText(r.title + r.description).includes("banh")));
-    assert.ok(filterRecipes(MOCK_RECIPES, { q: "", difficulty: "Easy", sort: "-createdAt" }).every((r) => r.difficulty === "Easy"));
-    assert.ok(filterRecipes(MOCK_RECIPES, { q: "", sort: "-createdAt" }).every((r) => r.status === "Published"));
+  it("parseRecipeFilters nhận categoryId dạng GUID và số trang", () => {
+    const id = "5F6E5827-0DE5-4294-9013-D326663DD2B8";
+    const f = parseRecipeFilters({ categoryId: id, page: "3" });
+    assert.equal(f.categoryId, id.toLowerCase());
+    assert.equal(f.page, 3);
   });
-  it("sắp xếp theo thời gian nấu tăng dần", () => {
-    const times = filterRecipes(MOCK_RECIPES, { q: "", sort: "cookTime" }).map((r) => r.cookTime);
-    assert.deepEqual(times, [...times].sort((a, b) => a - b));
+  it("filterQuery bỏ trang và giá trị mặc định", () => {
+    const f = parseRecipeFilters({ q: "ga", difficulty: "Easy", page: "2", sort: "-createdAt" });
+    assert.deepEqual(filterQuery(f, ["q", "categoryId", "difficulty", "sort", "page"]), { q: "ga", difficulty: "Easy" });
+  });
+});
+
+describe("validation (Zod) khớp quy tắc backend", () => {
+  const strong = "Moi@12345";
+  it("đăng nhập cần email hợp lệ và mật khẩu", () => {
+    assert.equal(loginSchema.safeParse({ email: " a@b.vn ", password: "x" }).success, true);
+    assert.equal(loginSchema.safeParse({ email: "sai", password: "x" }).success, false);
+    assert.equal(loginSchema.safeParse({ email: "a@b.vn", password: "" }).success, false);
+  });
+  it("đăng ký: mật khẩu mạnh và nhập lại khớp", () => {
+    const ok = { displayName: "Huy", email: "a@b.vn", password: strong, confirmPassword: strong };
+    assert.equal(registerSchema.safeParse(ok).success, true);
+    for (const weak of ["Moi12345", "moi@12345", "MOI@12345", "Moi@abcd", "Mo@1"]) {
+      assert.equal(registerSchema.safeParse({ ...ok, password: weak, confirmPassword: weak }).success, false, weak);
+    }
+    const mismatch = registerSchema.safeParse({ ...ok, confirmPassword: "Khac@12345" });
+    assert.equal(mismatch.success, false);
+    assert.deepEqual(mismatch.error?.issues[0].path, ["confirmPassword"]);
+  });
+  it("đổi mật khẩu: mật khẩu mới phải khác mật khẩu cũ", () => {
+    const same = changePasswordSchema.safeParse({ currentPassword: strong, newPassword: strong, confirmPassword: strong });
+    assert.equal(same.success, false);
+    assert.deepEqual(same.error?.issues[0].path, ["newPassword"]);
+    assert.equal(
+      changePasswordSchema.safeParse({ currentPassword: "Cu@12345", newPassword: strong, confirmPassword: strong }).success,
+      true,
+    );
+  });
+  it("đặt lại mật khẩu: nhập lại phải khớp", () => {
+    assert.equal(resetPasswordSchema.safeParse({ newPassword: strong, confirmPassword: strong }).success, true);
+    assert.equal(resetPasswordSchema.safeParse({ newPassword: strong, confirmPassword: "x" }).success, false);
+  });
+  it("hồ sơ: ảnh đại diện phải là http/https hoặc để trống", () => {
+    const base = { displayName: "Huy", bio: "" };
+    assert.equal(profileSchema.safeParse({ ...base, avatarUrl: "" }).success, true);
+    assert.equal(profileSchema.safeParse({ ...base, avatarUrl: "https://a.vn/x.png" }).success, true);
+    assert.equal(profileSchema.safeParse({ ...base, avatarUrl: "javascript:alert(1)" }).success, false);
+    assert.equal(profileSchema.safeParse({ ...base, avatarUrl: "", displayName: "H" }).success, false);
+    assert.equal(profileSchema.safeParse({ ...base, avatarUrl: "", bio: "a".repeat(1001) }).success, false);
   });
 });

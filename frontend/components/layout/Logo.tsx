@@ -5,11 +5,11 @@ import { cn } from "@/lib/utils";
 
 export function Logo({ className }: { className?: string }) {
   return (
-    <Link href="/" className={cn("flex items-center gap-2 font-bold tracking-tight", className)}>
+    <Link href="/" className={cn("flex shrink-0 items-center gap-2 font-bold tracking-tight", className)}>
       <span className="flex size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
         <ChefHat className="size-5" />
       </span>
-      <span className="text-lg">{SITE.name}</span>
+      <span className="text-base whitespace-nowrap sm:text-lg">{SITE.name}</span>
     </Link>
   );
 }

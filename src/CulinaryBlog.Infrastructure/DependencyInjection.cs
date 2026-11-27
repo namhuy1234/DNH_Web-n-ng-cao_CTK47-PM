@@ -1,5 +1,6 @@
 using CulinaryBlog.Application.Auth;
 using CulinaryBlog.Application.Common;
+using CulinaryBlog.Infrastructure.Email;
 using CulinaryBlog.Infrastructure.Storage;
 using CulinaryBlog.Domain.Repositories;
 using CulinaryBlog.Infrastructure.Persistence.Repositories;
@@ -34,7 +35,17 @@ public static class DependencyInjection
                 options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(15);
             })
             .AddRoles<IdentityRole>()
-            .AddEntityFrameworkStores<CulinaryBlogDbContext>();
+            .AddEntityFrameworkStores<CulinaryBlogDbContext>()
+            .AddDefaultTokenProviders();
+
+        // Token đặt lại mật khẩu: hết hạn sau 30 phút; gắn với SecurityStamp nên dùng xong là hết hiệu lực.
+        services.AddDataProtection();
+        services.Configure<DataProtectionTokenProviderOptions>(o => o.TokenLifespan = TimeSpan.FromMinutes(30));
+        services.Configure<EmailOptions>(configuration.GetSection("Email"));
+        // Email gửi qua hàng đợi chạy nền: yêu cầu HTTP không phải chờ SMTP.
+        services.AddSingleton<EmailQueue>();
+        services.AddHostedService<EmailSenderService>();
+        services.AddScoped<IAuthEmailService, AuthEmailService>();
 
         services.AddScoped<ICategoryRepository, CategoryRepository>();
         services.AddScoped<IRecipeRepository, RecipeRepository>();

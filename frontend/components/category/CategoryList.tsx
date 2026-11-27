@@ -28,7 +28,7 @@ export async function CategoryList({ limit }: { limit?: number }) {
       {categories.slice(0, limit).map((category) => (
         <li key={category.id}>
           <Link
-            href="/recipes"
+            href={`/categories/${category.slug}`}
             className="flex h-full flex-col gap-1 rounded-xl border bg-card p-4 transition-colors hover:border-primary/50 hover:bg-accent"
           >
             <span className="font-semibold">{category.name}</span>

@@ -1,125 +1,85 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ChevronLeft, Clock, Flame, Users } from "lucide-react";
-import { DifficultyBadge, RecipeCover } from "@/components/recipe/RecipeCard";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
-import { formatDate, formatDuration } from "@/lib/format";
-import { MOCK_RECIPES } from "@/lib/mock-data";
-
-// Nguyên liệu và các bước mẫu dùng chung cho giao diện tĩnh.
-const SAMPLE_INGREDIENTS = [
-  ["Nguyên liệu chính", "500 g"],
-  ["Hành tím", "3 củ"],
-  ["Tỏi", "2 tép"],
-  ["Nước mắm", "2 muỗng canh"],
-  ["Đường", "1 muỗng canh"],
-  ["Rau thơm", "1 bó"],
-];
-const SAMPLE_STEPS = [
-  ["Sơ chế", "Rửa sạch nguyên liệu, để ráo. Hành tỏi bóc vỏ, băm nhỏ."],
-  ["Ướp", "Ướp nguyên liệu chính với nước mắm, đường và một nửa phần hành tỏi trong 20 phút."],
-  ["Nấu", "Phi thơm phần hành tỏi còn lại, cho nguyên liệu vào nấu lửa vừa đến khi chín."],
-  ["Hoàn thiện", "Nêm nếm lại cho vừa ăn, rắc rau thơm và dọn ra đĩa."],
-];
-
-/** Dựng sẵn trang cho các slug mẫu lúc build. */
-export function generateStaticParams() {
-  return MOCK_RECIPES.map((recipe) => ({ slug: recipe.slug }));
-}
+import { Suspense } from "react";
+import { RecipeCard } from "@/components/recipe/RecipeCard";
+import { RecipeDetail } from "@/components/recipe/RecipeDetail";
+import { Skeleton } from "@/components/ui/skeleton";
+import { getCategory, getRecipe } from "@/lib/api/public";
 
 export async function generateMetadata({ params }: PageProps<"/recipes/[slug]">): Promise<Metadata> {
-  const { slug } = await params;
-  const recipe = MOCK_RECIPES.find((r) => r.slug === slug);
-  return { title: recipe?.title ?? "Không tìm thấy công thức", description: recipe?.description };
+  const recipe = await getRecipe((await params).slug).catch(() => null);
+  if (!recipe) return { title: "Không tìm thấy công thức" };
+  return {
+    title: recipe.title,
+    description: recipe.description,
+    openGraph: { type: "article", title: recipe.title, description: recipe.description },
+  };
 }
 
-export default async function RecipeDetailPage({ params }: PageProps<"/recipes/[slug]">) {
+/*
+ * Với Cache Components, Next.js gửi phần khung tĩnh (mã 200) trước rồi mới chạy phần đọc dữ liệu,
+ * nên notFound() không đổi được mã trạng thái; nó vẫn hiện trang 404 và tự thêm
+ * <meta name="robots" content="noindex"> để máy tìm kiếm không lưu trang (tài liệu not-found.md).
+ */
+export default function RecipeDetailPage({ params }: PageProps<"/recipes/[slug]">) {
+  return (
+    <div className="container mx-auto max-w-6xl px-4 py-8">
+      <Suspense fallback={<DetailSkeleton />}>
+        <RecipeContent params={params} />
+      </Suspense>
+    </div>
+  );
+}
+
+async function RecipeContent({ params }: Pick<PageProps<"/recipes/[slug]">, "params">) {
   const { slug } = await params;
-  const recipe = MOCK_RECIPES.find((r) => r.slug === slug);
+  // Không có, đã xóa hoặc là bản nháp (API trả 404 với người chưa đăng nhập) -> trang 404.
+  const recipe = await getRecipe(slug);
   if (!recipe) notFound();
 
-  const meta = [
-    { icon: Clock, label: "Chuẩn bị", value: formatDuration(recipe.prepTime) },
-    { icon: Flame, label: "Nấu", value: formatDuration(recipe.cookTime) },
-    { icon: Users, label: "Khẩu phần", value: `${recipe.servings} người` },
-  ];
+  return (
+    <>
+      <RecipeDetail recipe={recipe} />
+      {/* Món cùng danh mục không quan trọng bằng nội dung chính: stream sau. */}
+      <Suspense fallback={<Skeleton className="mt-12 h-64 w-full" />}>
+        <RelatedRecipes categorySlug={recipe.categorySlug} currentId={recipe.id} />
+      </Suspense>
+    </>
+  );
+}
+
+/** Công thức cùng danh mục (không gồm món đang xem). Lỗi ở đây không làm hỏng trang. */
+async function RelatedRecipes({ categorySlug, currentId }: { categorySlug: string; currentId: string }) {
+  const detail = await getCategory(categorySlug, 1, 5).catch(() => null);
+  const related = detail?.recipes.items.filter((r) => r.id !== currentId).slice(0, 4) ?? [];
+  if (related.length === 0) return null;
 
   return (
-    <article className="container mx-auto max-w-5xl px-4 py-8">
-      <Button asChild variant="ghost" size="sm" className="mb-4">
-        <Link href="/recipes">
-          <ChevronLeft /> Tất cả công thức
-        </Link>
-      </Button>
-
-      <div className="grid gap-8 lg:grid-cols-[1fr_320px]">
-        <div className="space-y-6">
-          <RecipeCover recipe={recipe} className="aspect-video w-full rounded-2xl" />
-          <header className="space-y-3">
-            <div className="flex flex-wrap gap-2">
-              <Badge variant="outline">{recipe.categoryName}</Badge>
-              <DifficultyBadge difficulty={recipe.difficulty} />
-            </div>
-            <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">{recipe.title}</h1>
-            <p className="text-lg text-muted-foreground">{recipe.description}</p>
-            <p className="text-sm text-muted-foreground">
-              Đăng bởi <span className="font-medium text-foreground">{recipe.authorName}</span> ngày {formatDate(recipe.createdAt)}
-            </p>
-          </header>
-
-          <dl className="grid grid-cols-3 divide-x rounded-xl border bg-card">
-            {meta.map(({ icon: Icon, label, value }) => (
-              <div key={label} className="flex flex-col items-center gap-1 p-4 text-center">
-                <Icon className="size-5 text-primary" />
-                <dt className="text-xs text-muted-foreground">{label}</dt>
-                <dd className="font-semibold">{value}</dd>
-              </div>
-            ))}
-          </dl>
-
-          <section>
-            <h2 className="mb-4 text-xl font-bold">Cách làm</h2>
-            <ol className="space-y-5">
-              {SAMPLE_STEPS.map(([title, description], i) => (
-                <li key={title} className="flex gap-4">
-                  <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-primary font-semibold text-primary-foreground">
-                    {i + 1}
-                  </span>
-                  <div>
-                    <h3 className="font-semibold">{title}</h3>
-                    <p className="text-muted-foreground">{description}</p>
-                  </div>
-                </li>
-              ))}
-            </ol>
-          </section>
-        </div>
-
-        <aside>
-          <Card className="lg:sticky lg:top-24">
-            <CardHeader>
-              <CardTitle>Nguyên liệu</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <ul className="text-sm">
-                {SAMPLE_INGREDIENTS.map(([name, amount], i) => (
-                  <li key={name}>
-                    {i > 0 && <Separator className="my-2" />}
-                    <div className="flex justify-between gap-4">
-                      <span>{name}</span>
-                      <span className="font-medium">{amount}</span>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            </CardContent>
-          </Card>
-        </aside>
+    <section aria-labelledby="related-heading" className="mt-12 border-t pt-8">
+      <h2 id="related-heading" className="mb-6 text-2xl font-bold">
+        Cùng danh mục {detail!.category.name}
+      </h2>
+      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        {related.map((recipe) => (
+          <RecipeCard key={recipe.id} recipe={recipe} />
+        ))}
       </div>
-    </article>
+    </section>
+  );
+}
+
+function DetailSkeleton() {
+  return (
+    <div className="space-y-6" role="status" aria-label="Đang tải công thức">
+      <Skeleton className="h-4 w-64" />
+      <div className="grid gap-6 lg:grid-cols-2">
+        <Skeleton className="aspect-video w-full rounded-2xl" />
+        <div className="space-y-3">
+          <Skeleton className="h-6 w-32" />
+          <Skeleton className="h-10 w-3/4" />
+          <Skeleton className="h-20 w-full" />
+        </div>
+      </div>
+    </div>
   );
 }

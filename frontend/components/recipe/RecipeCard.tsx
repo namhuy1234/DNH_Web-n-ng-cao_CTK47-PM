@@ -3,6 +3,7 @@ import { Clock, CookingPot, Users } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { DIFFICULTY_LABELS, formatDuration } from "@/lib/format";
+import { mediaUrl } from "@/lib/media";
 import { cn } from "@/lib/utils";
 import type { RecipeDifficulty, RecipeSummaryDto } from "@/types";
 
@@ -22,10 +23,17 @@ export function DifficultyBadge({ difficulty }: { difficulty: RecipeDifficulty }
 }
 
 /** Ảnh đại diện; chưa có ảnh thì hiện nền chuyển màu và biểu tượng nồi. */
-export function RecipeCover({ recipe, className }: { recipe: RecipeSummaryDto; className?: string }) {
-  if (recipe.primaryImageUrl) {
+export function RecipeCover({
+  recipe,
+  className,
+}: {
+  recipe: Pick<RecipeSummaryDto, "title" | "primaryImageUrl">;
+  className?: string;
+}) {
+  const src = mediaUrl(recipe.primaryImageUrl);
+  if (src) {
     // eslint-disable-next-line @next/next/no-img-element -- ảnh từ backend, Lab 8 chuyển sang next/image
-    return <img data-cover src={recipe.primaryImageUrl} alt={recipe.title} className={cn("object-cover", className)} />;
+    return <img data-cover src={src} alt={recipe.title} loading="lazy" className={cn("object-cover", className)} />;
   }
   return (
     <div data-cover className={cn("flex items-center justify-center bg-gradient-to-br from-orange-100 via-amber-50 to-rose-100 dark:from-orange-950/60 dark:via-stone-900 dark:to-rose-950/50", className)}>

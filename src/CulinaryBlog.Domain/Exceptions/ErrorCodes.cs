@@ -19,6 +19,8 @@ public static class ErrorCodes
     public const string AuthRefreshTokenRevoked = "AUTH_REFRESH_TOKEN_REVOKED";
     public const string AuthRefreshTokenInvalid = "AUTH_REFRESH_TOKEN_INVALID";
     public const string AuthGoogleTokenInvalid = "AUTH_GOOGLE_TOKEN_INVALID";
+    public const string AuthWrongPassword = "AUTH_WRONG_PASSWORD";
+    public const string AuthResetTokenInvalid = "AUTH_RESET_TOKEN_INVALID";
     public const string UserNotFound = "USER_NOT_FOUND";
     public const string CategoryDeleteHasRecipes = "CATEGORY_DELETE_HAS_RECIPES";
     public const string StepNotFound = "STEP_NOT_FOUND";

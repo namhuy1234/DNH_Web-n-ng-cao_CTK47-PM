@@ -112,6 +112,47 @@ public class IdentityService(UserManager<ApplicationUser> users) : IIdentityServ
         return await ToProfileAsync(user);
     }
 
+    public async Task ChangePasswordAsync(string userId, string currentPassword, string newPassword)
+    {
+        var user = await users.FindByIdAsync(userId)
+            ?? throw new NotFoundException(ErrorCodes.UserNotFound, "Không tìm thấy tài khoản.");
+
+        // Tài khoản tạo bằng Google chưa có mật khẩu: không có gì để đổi.
+        if (!await users.HasPasswordAsync(user))
+            throw new BadRequestException(ErrorCodes.AuthWrongPassword, "Tài khoản đăng nhập bằng Google chưa có mật khẩu.");
+
+        var result = await users.ChangePasswordAsync(user, currentPassword, newPassword);
+        if (result.Errors.Any(e => e.Code == "PasswordMismatch"))
+            throw new BadRequestException(ErrorCodes.AuthWrongPassword, "Mật khẩu hiện tại không đúng.");
+        Ensure(result);
+    }
+
+    public async Task<(string Token, string DisplayName)?> CreatePasswordResetTokenAsync(string email)
+    {
+        var user = await users.FindByEmailAsync(email);
+        if (user is null || !user.IsActive || !await users.HasPasswordAsync(user)) return null;
+
+        return (await users.GeneratePasswordResetTokenAsync(user), user.DisplayName);
+    }
+
+    public async Task<string> ResetPasswordAsync(string email, string token, string newPassword)
+    {
+        var invalid = new BadRequestException(ErrorCodes.AuthResetTokenInvalid,
+            "Liên kết đặt lại mật khẩu không hợp lệ hoặc đã hết hạn. Hãy gửi yêu cầu mới.");
+
+        var user = await users.FindByEmailAsync(email);
+        if (user is null || !user.IsActive) throw invalid;
+
+        var result = await users.ResetPasswordAsync(user, token, newPassword);
+        if (result.Errors.Any(e => e.Code == "InvalidToken")) throw invalid;
+        Ensure(result);
+
+        // Người dùng chứng minh được quyền với email: mở khóa nếu đang bị khóa do sai mật khẩu.
+        await users.SetLockoutEndDateAsync(user, null);
+        await users.ResetAccessFailedCountAsync(user);
+        return user.Id;
+    }
+
     private async Task<UserProfileDto> ToProfileAsync(ApplicationUser user)
         => new(user.Id, user.Email!, user.DisplayName, user.AvatarUrl, user.Bio,
             (await users.GetRolesAsync(user)).ToList(), user.EmailConfirmed, user.CreatedAt);

@@ -1,4 +1,4 @@
-# Culinary Blog – Lab 6
+# Culinary Blog – Lab 7
 
 Backend .NET 10 theo Clean Architecture, cơ sở dữ liệu PostgreSQL 16.
 
@@ -147,4 +147,37 @@ cd frontend
 ```
 ```powershell
 npm run test:utils
+```
+
+## Lab 7: tài khoản, hồ sơ, trang chủ, chi tiết, tìm kiếm, danh mục
+
+Backend thêm 3 endpoint (tiền tố `/api/v1/auth`):
+
+| Endpoint | Quyền | Mô tả |
+|---|---|---|
+| `POST /change-password` | Đăng nhập | Đổi mật khẩu; thu hồi mọi phiên cũ, trả phiên mới |
+| `POST /forgot-password` | Không | Gửi email chứa liên kết đặt lại (luôn trả 202 để không lộ email đã đăng ký) |
+| `POST /reset-password` | Không | Đặt mật khẩu mới bằng token trong email (hết hạn sau 30 phút, dùng một lần) |
+
+Email gửi qua SMTP; khi phát triển dùng MailHog trong `docker-compose.yml` (xem thư tại http://localhost:8025).
+Cấu hình ở mục `Email` của `appsettings.Development.json`; để trống `SmtpHost` thì email chỉ được ghi vào log.
+
+Frontend:
+
+- Form đăng ký, đăng nhập, quên mật khẩu, đặt lại mật khẩu, đổi mật khẩu, hồ sơ dùng React Hook Form + Zod
+  (cùng quy tắc với backend), lỗi theo trường từ API được gắn vào đúng ô.
+- Trang chủ có sidebar danh mục và danh sách công thức mới; trang chi tiết, tìm kiếm (không dấu), danh sách
+  công thức có lọc, danh sách danh mục và công thức theo danh mục đều lấy dữ liệu thật từ API (cache vài phút).
+- Trang quản lý (thống kê, bảng công thức) vẫn dùng dữ liệu mẫu, làm ở Lab 8.
+
+Kiểm thử (cần API, MailHog, frontend đang chạy; nới rate limit vì script đăng nhập nhiều lần):
+
+```powershell
+$env:RateLimiting__Auth=1000; dotnet run --project src/CulinaryBlog.API
+```
+```powershell
+python scripts/test_password.py
+```
+```powershell
+python scripts/test_lab7_ui.py
 ```

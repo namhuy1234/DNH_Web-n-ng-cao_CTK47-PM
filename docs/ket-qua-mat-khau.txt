@@ -1,0 +1,26 @@
+Kiem thu API doi mat khau, quen mat khau (Lab 7) - chay ngay 27/11/2026 22:07
+Lenh: python scripts/test_password.py
+
+DAT Đăng ký tài khoản thử  (201)
+DAT Đổi mật khẩu: sai mật khẩu hiện tại -> 400  (400)
+DAT Đổi mật khẩu: mật khẩu mới yếu -> 422 kèm lỗi trường  (422)
+DAT Đổi mật khẩu: trùng mật khẩu cũ -> 422  (422)
+DAT Đổi mật khẩu: chưa đăng nhập -> 401  (401)
+DAT Đổi mật khẩu thành công -> 200, cấp phiên mới  (200)
+DAT Refresh token cũ bị thu hồi sau khi đổi mật khẩu  (401)
+DAT Mật khẩu cũ không đăng nhập được  (401)
+DAT Mật khẩu mới đăng nhập được  (200)
+DAT Quên mật khẩu, email không tồn tại -> vẫn 202  (202)
+DAT Quên mật khẩu, email sai định dạng -> 422  (422)
+DAT Quên mật khẩu, email có thật -> 202  (202)
+DAT MailHog nhận email có liên kết đặt lại  (http://localhost:3000/reset-password?email=thu-mat-khau-06e9)
+DAT Liên kết chứa đúng email
+DAT Đặt lại: token giả -> 400  (400)
+DAT Đặt lại: mật khẩu yếu -> 422  (422)
+DAT Đặt lại thành công -> 204  (204)
+DAT Token đã dùng không dùng lại được -> 400  (400)
+DAT Mọi phiên cũ bị thu hồi sau khi đặt lại  (401)
+DAT Đăng nhập bằng mật khẩu mới  (200)
+DAT Quên mật khẩu trả về nhanh như nhau dù email có hay không  (có: 0.01s, không: 0.01s)
+
+Tong: 21/21 dat

@@ -1,4 +1,4 @@
-Kiem thu frontend Lab 6 - chay ngay 27/11/2026 20:49
+Unit test frontend - chay ngay 27/11/2026 22:09
 Lenh: npm run test:utils
 
   ✔ hiện đủ khi ít trang
@@ -24,13 +24,19 @@ Lenh: npm run test:utils
   ✔ Error thường giữ nguyên message
 ✔ ApiError / toApiError
   ✔ giữ đường dẫn nội bộ
+  ✔ không quay lại trang đăng nhập/đăng ký (tránh vòng lặp)
   ✔ chặn chuyển hướng ra ngoài
 ✔ safeRedirect
-  ✔ normalizeText bỏ dấu và đ/Đ
   ✔ parseRecipeFilters bỏ giá trị lạ
-  ✔ lọc theo từ khóa không dấu và độ khó, bỏ bản nháp
-  ✔ sắp xếp theo thời gian nấu tăng dần
+  ✔ parseRecipeFilters nhận categoryId dạng GUID và số trang
+  ✔ filterQuery bỏ trang và giá trị mặc định
 ✔ recipe-search
-ℹ tests 24
-ℹ pass 24
+  ✔ đăng nhập cần email hợp lệ và mật khẩu
+  ✔ đăng ký: mật khẩu mạnh và nhập lại khớp
+  ✔ đổi mật khẩu: mật khẩu mới phải khác mật khẩu cũ
+  ✔ đặt lại mật khẩu: nhập lại phải khớp
+  ✔ hồ sơ: ảnh đại diện phải là http/https hoặc để trống
+✔ validation (Zod) khớp quy tắc backend
+ℹ tests 29
+ℹ pass 29
 ℹ fail 0

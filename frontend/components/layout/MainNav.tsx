@@ -14,13 +14,17 @@ export function isActivePath(pathname: string, href: string, allHrefs: string[] 
 }
 
 export function MainNav() {
-  const pathname = usePathname();
+  return <MainNavLinks pathname={usePathname()} />;
+}
+
+/** Phần hiển thị; pathname null (khi đang chờ Suspense) thì chưa tô mục nào. */
+export function MainNavLinks({ pathname }: { pathname: string | null }) {
   const hrefs = MAIN_NAV.map((item) => item.href);
 
   return (
     <nav className="hidden items-center gap-1 md:flex">
       {MAIN_NAV.map((item) => {
-        const active = isActivePath(pathname, item.href, hrefs);
+        const active = pathname !== null && isActivePath(pathname, item.href, hrefs);
         return (
           <Link
             key={item.href}

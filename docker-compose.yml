@@ -19,5 +19,13 @@ services:
       timeout: 3s
       retries: 20
 
+  # Hộp thư giả cho môi trường phát triển: nhận email qua SMTP 1025, xem tại http://localhost:8025
+  mailhog:
+    image: mailhog/mailhog:v1.0.1
+    container_name: culinary-mailhog
+    ports:
+      - "127.0.0.1:1025:1025"
+      - "127.0.0.1:8025:8025"
+
 volumes:
   pgdata:

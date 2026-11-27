@@ -1,8 +1,13 @@
 import type { Metadata } from "next";
-import { AuthForm } from "@/components/auth/AuthForm";
+import { GuestOnly } from "@/components/auth/GuestOnly";
+import { LoginForm } from "@/components/auth/LoginForm";
 
 export const metadata: Metadata = { title: "Đăng nhập" };
 
 export default function LoginPage() {
-  return <AuthForm mode="login" />;
+  return (
+    <GuestOnly>
+      <LoginForm />
+    </GuestOnly>
+  );
 }

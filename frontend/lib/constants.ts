@@ -1,4 +1,4 @@
-import { BookOpen, ChefHat, FilePlus2, Home, LayoutDashboard, LayoutGrid, Search, UserRound } from "lucide-react";
+import { BookOpen, ChefHat, FilePlus2, Home, KeyRound, LayoutDashboard, LayoutGrid, Search, UserRound } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
 export const SITE = {
@@ -27,6 +27,7 @@ export const DASHBOARD_NAV: NavItem[] = [
   { title: "Công thức của tôi", href: "/dashboard/recipes", icon: ChefHat },
   { title: "Viết công thức", href: "/dashboard/recipes/new", icon: FilePlus2 },
   { title: "Hồ sơ", href: "/dashboard/profile", icon: UserRound },
+  { title: "Đổi mật khẩu", href: "/dashboard/password", icon: KeyRound },
 ];
 
-export const RECIPES_PAGE_SIZE = 8;
+export const RECIPES_PAGE_SIZE = 12;

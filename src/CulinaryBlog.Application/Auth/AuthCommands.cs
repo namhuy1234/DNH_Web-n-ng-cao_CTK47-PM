@@ -14,14 +14,7 @@ public class RegisterValidator : AbstractValidator<RegisterCommand>
     public RegisterValidator()
     {
         RuleFor(x => x.Email).NotEmpty().EmailAddress().MaximumLength(256).WithMessage("Email không hợp lệ.");
-        RuleFor(x => x.Password)
-            .Cascade(CascadeMode.Stop)
-            .NotEmpty().WithMessage("Mật khẩu không được để trống.")
-            .Length(8, 100).WithMessage("Mật khẩu dài từ 8 đến 100 ký tự.")
-            .Matches("[A-Z]").WithMessage("Mật khẩu cần ít nhất 1 chữ hoa.")
-            .Matches("[a-z]").WithMessage("Mật khẩu cần ít nhất 1 chữ thường.")
-            .Matches("[0-9]").WithMessage("Mật khẩu cần ít nhất 1 chữ số.")
-            .Matches("[^a-zA-Z0-9]").WithMessage("Mật khẩu cần ít nhất 1 ký tự đặc biệt.");
+        RuleFor(x => x.Password).StrongPassword();
         RuleFor(x => (x.DisplayName ?? string.Empty).Trim())
             .Length(2, 100).WithMessage("Tên hiển thị dài từ 2 đến 100 ký tự.")
             .OverridePropertyName(nameof(RegisterCommand.DisplayName));

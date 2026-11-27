@@ -15,7 +15,14 @@ export const apiClient = axios.create({
 type RetriableConfig = InternalAxiosRequestConfig & { _retried?: boolean };
 
 // Các endpoint này không gắn token và không tự refresh khi bị 401.
-const PUBLIC_AUTH_PATHS = ["/auth/login", "/auth/register", "/auth/google", "/auth/refresh"];
+const PUBLIC_AUTH_PATHS = [
+  "/auth/login",
+  "/auth/register",
+  "/auth/google",
+  "/auth/refresh",
+  "/auth/forgot-password",
+  "/auth/reset-password",
+];
 const isPublicAuthPath = (url = "") => PUBLIC_AUTH_PATHS.some((path) => url.startsWith(path));
 
 apiClient.interceptors.request.use((config) => {

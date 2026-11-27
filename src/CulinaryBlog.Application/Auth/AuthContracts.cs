@@ -22,6 +22,15 @@ public interface IIdentityService
     Task EnsureCanSignInAsync(string userId);
 
     Task<UserProfileDto> UpdateProfileAsync(string userId, string? displayName, string? avatarUrl, string? bio);
+
+    /// <summary>Ném lỗi 400 nếu mật khẩu hiện tại sai.</summary>
+    Task ChangePasswordAsync(string userId, string currentPassword, string newPassword);
+
+    /// <summary>Trả null nếu email không có tài khoản dùng mật khẩu (hoặc tài khoản bị khóa).</summary>
+    Task<(string Token, string DisplayName)?> CreatePasswordResetTokenAsync(string email);
+
+    /// <summary>Đặt mật khẩu mới bằng token; trả về id người dùng. Token sai hoặc hết hạn: lỗi 400.</summary>
+    Task<string> ResetPasswordAsync(string email, string token, string newPassword);
 }
 
 public interface ITokenService

@@ -28,6 +28,22 @@ public static class AuthEndpoints
             return Results.NoContent();
         }).RequireAuthorization();
 
+        group.MapPost("/change-password", async (ChangePasswordCommand command, ISender sender, CancellationToken ct) =>
+            Results.Ok(await sender.Send(command, ct))).RequireAuthorization();
+
+        // Luôn trả 202 dù email có tồn tại hay không, để không lộ ai đã đăng ký.
+        group.MapPost("/forgot-password", async (ForgotPasswordCommand command, ISender sender, CancellationToken ct) =>
+        {
+            await sender.Send(command, ct);
+            return Results.Accepted(value: new { message = "Nếu email đã đăng ký, hướng dẫn đặt lại mật khẩu đã được gửi." });
+        });
+
+        group.MapPost("/reset-password", async (ResetPasswordCommand command, ISender sender, CancellationToken ct) =>
+        {
+            await sender.Send(command, ct);
+            return Results.NoContent();
+        });
+
         group.MapGet("/me", async (ISender sender, CancellationToken ct) =>
             Results.Ok(await sender.Send(new GetMyProfileQuery(), ct))).RequireAuthorization();
 

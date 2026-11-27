@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
-import { LayoutDashboard, LogOut, UserRound } from "lucide-react";
+import { KeyRound, LayoutDashboard, LogOut, UserRound } from "lucide-react";
 import { toast } from "sonner";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -77,6 +77,11 @@ export function UserMenu() {
         <DropdownMenuItem asChild>
           <Link href="/dashboard/profile">
             <UserRound /> Hồ sơ
+          </Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem asChild>
+          <Link href="/dashboard/password">
+            <KeyRound /> Đổi mật khẩu
           </Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
