@@ -1,0 +1,40 @@
+DAT Menu tác giả không có mục quản trị
+DAT Tác giả mở trang người dùng bị chặn
+DAT Bấm lưu khi form trống: báo lỗi từng ô
+DAT Lưu nháp xong chuyển sang trang sửa để thêm ảnh
+DAT Trạng thái ban đầu là Bản nháp
+DAT Tải 2 ảnh lên, ảnh đầu là ảnh bìa
+DAT Ảnh hiển thị từ máy chủ API  (http://localhost:5000/uploads/recipes/12edda40-02d8-424e-b425-78cb81ce80de/7e04c25828d04356a14deb9d4377dfe7.png)
+DAT Ảnh GIF bị chặn ngay ở trình duyệt
+DAT Đổi ảnh bìa
+DAT Panel trạng thái nhắc lưu trước khi đổi trạng thái
+DAT Lưu sửa: thứ tự bước mới, còn 2 nguyên liệu, 6 khẩu phần  (['Nướng chả', 'Ướp thịt'])
+DAT Tải lại trang vẫn đúng thứ tự bước
+DAT Lưu lỗi giữa chừng: báo đã lưu một phần, giữ nội dung đang nhập
+DAT Lưu lại sau lỗi: không bị 409, không thêm trùng nguyên liệu  (['Thịt ba chỉ', 'Bún tươi', 'Hành lá', 'Tiêu xay'])
+DAT Đăng bài: trạng thái thành Đã đăng
+DAT Bài vừa đăng xem được ngay ở trang công khai (cache đã làm mới)
+DAT Bài lưu trữ không còn công khai, hiện trang 404 (không vỡ trang)
+DAT Danh sách quản lý có bài vừa tạo
+DAT Lọc Bản nháp không có bài đã lưu trữ
+DAT Bài bị xóa nằm trong tab Đã xóa
+DAT Khôi phục về Bản nháp, tìm được theo tên
+DAT Tổng quan: 1 bản nháp của tôi, không có thống kê toàn hệ thống
+DAT Đổi ảnh đại diện bằng tải ảnh lên  (http://localhost:5000/uploads/avatars/53e50e6b-68c6-4a6a-89db-211d90e33c38/12a78e98b14d4c398427ec0f699c38a4.png)
+DAT Lưu hồ sơ khi ảnh đại diện là ảnh đã tải lên
+DAT Menu admin có Người dùng và Nhật ký hệ thống
+DAT Tổng quan admin có thống kê toàn hệ thống
+DAT Trang người dùng có danh sách  (10)
+DAT Lọc vai trò Quản trị viên
+DAT Tìm tác giả theo email, thấy số công thức  (Đầu bếp Lab 8 |  | ui-lab8-4c1039@culinaryblog.local |  | 	 | Tác giả | 	1 bài (0 đã đăng)	Hoạt động	28/11/2026	 | Khóa)
+DAT Khóa tài khoản tác giả
+DAT Tác giả bị khóa bị đăng xuất ngay ở lần gọi API kế tiếp
+DAT Mở khóa tài khoản
+DAT Trang nhật ký có dữ liệu  (200)
+DAT Lọc mức Warning trở lên  ({'WARN'})
+DAT Tìm thấy dòng nhật ký khóa tài khoản
+DAT Bấm mã yêu cầu lọc mọi dòng cùng yêu cầu  (cb3078a6: 14 dòng)
+DAT Trang quản lý trên điện thoại không tràn ngang  (390)
+DAT Không có lỗi JavaScript trên trang
+
+Tong: 38/38 dat

@@ -1,6 +1,3 @@
-Kiem thu API doi mat khau, quen mat khau (Lab 7) - chay ngay 27/11/2026 22:07
-Lenh: python scripts/test_password.py
-
 DAT Đăng ký tài khoản thử  (201)
 DAT Đổi mật khẩu: sai mật khẩu hiện tại -> 400  (400)
 DAT Đổi mật khẩu: mật khẩu mới yếu -> 422 kèm lỗi trường  (422)
@@ -13,7 +10,7 @@ DAT Mật khẩu mới đăng nhập được  (200)
 DAT Quên mật khẩu, email không tồn tại -> vẫn 202  (202)
 DAT Quên mật khẩu, email sai định dạng -> 422  (422)
 DAT Quên mật khẩu, email có thật -> 202  (202)
-DAT MailHog nhận email có liên kết đặt lại  (http://localhost:3000/reset-password?email=thu-mat-khau-06e9)
+DAT MailHog nhận email có liên kết đặt lại  (http://localhost:3000/reset-password?email=thu-mat-khau-87d5)
 DAT Liên kết chứa đúng email
 DAT Đặt lại: token giả -> 400  (400)
 DAT Đặt lại: mật khẩu yếu -> 422  (422)

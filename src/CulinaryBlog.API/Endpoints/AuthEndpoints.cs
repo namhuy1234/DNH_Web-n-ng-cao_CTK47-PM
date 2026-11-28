@@ -49,5 +49,18 @@ public static class AuthEndpoints
 
         group.MapPatch("/me", async (UpdateProfileCommand command, ISender sender, CancellationToken ct) =>
             Results.Ok(await sender.Send(command, ct))).RequireAuthorization();
+
+        // Tải ảnh đại diện: nằm ngoài nhóm /auth để dùng giới hạn tần suất riêng của upload.
+        app.MapPost("/auth/me/avatar", async (HttpRequest request, ISender sender, CancellationToken ct) =>
+            {
+                var file = await FormFiles.ReadSingleAsync(request, ct);
+                await using var content = file.OpenReadStream();
+                return Results.Ok(await sender.Send(new UploadAvatarCommand(content, file.Length, file.ContentType), ct));
+            })
+            .WithTags("Auth")
+            .RequireAuthorization()
+            .RequireRateLimiting(RateLimitSetup.UploadPolicy)
+            .Accepts<IFormFile>("multipart/form-data")
+            .DisableAntiforgery();
     }
 }

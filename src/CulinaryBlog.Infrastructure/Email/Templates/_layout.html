@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>{{Subject}}</title>
+  <!--
+    Khung chung cho mọi email của Culinary Blog.
+    Trình đọc email (Gmail, Outlook) bỏ qua thẻ <style> trong <head> ở nhiều trường hợp,
+    nên mọi định dạng quan trọng đều viết inline và bố cục dùng bảng thay vì flex/grid.
+  -->
+</head>
+<body style="margin:0;padding:0;background-color:#f6f1ea;font-family:'Segoe UI',Arial,Helvetica,sans-serif;color:#2b2118;">
+  <span style="display:none;max-height:0;overflow:hidden;opacity:0;">{{Preheader}}</span>
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#f6f1ea;">
+    <tr>
+      <td align="center" style="padding:32px 12px;">
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"
+               style="max-width:560px;background-color:#ffffff;border-radius:12px;overflow:hidden;border:1px solid #eadfce;">
+          <tr>
+            <td style="background-color:#c2410c;padding:20px 28px;">
+              <a href="{{SiteUrl}}" style="color:#ffffff;text-decoration:none;font-size:20px;font-weight:700;letter-spacing:0.2px;">
+                &#127859; Culinary Blog
+              </a>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:28px 28px 8px 28px;font-size:15px;line-height:1.6;">
+              {{Body}}
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:8px 28px 28px 28px;font-size:12px;line-height:1.5;color:#8a7a6a;border-top:1px solid #f1e8dc;">
+              Bạn nhận được email này vì có tài khoản tại Culinary Blog.<br>
+              Đây là email tự động, vui lòng không trả lời.
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>

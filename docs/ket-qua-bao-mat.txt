@@ -1,4 +1,4 @@
-﻿Kiem thu bao mat va tai lieu API - chay ngay 27/11/2026 17:40
+﻿Kiem thu bao mat va tai lieu API - chay ngay 28/11/2026 08:08
 Dat 18/18 truong hop
 
 == CORS ==
@@ -15,9 +15,9 @@ Dat 18/18 truong hop
 [DAT] /api/v2 chua ton tai                                 404
 
 == Tai lieu API ==
-[DAT] /openapi/v1.json co 30 endpoint /api/v1              200, 30 operation
-[DAT] Moi endpoint co mo ta                                30/30
-[DAT] Khai bao bao mat Bearer                              21 endpoint can token
+[DAT] /openapi/v1.json co 43 endpoint /api/v1              200, 43 operation
+[DAT] Moi endpoint co mo ta                                43/43
+[DAT] Khai bao bao mat Bearer                              32 endpoint can token
 [DAT] Giao dien Scalar /scalar/v1                          200
 
 == Phan quyen ==

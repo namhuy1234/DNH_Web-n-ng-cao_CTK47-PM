@@ -112,6 +112,17 @@ public class IdentityService(UserManager<ApplicationUser> users) : IIdentityServ
         return await ToProfileAsync(user);
     }
 
+    public async Task<(UserProfileDto Profile, string? OldAvatarUrl)> SetAvatarAsync(string userId, string avatarUrl)
+    {
+        var user = await users.FindByIdAsync(userId)
+            ?? throw new NotFoundException(ErrorCodes.UserNotFound, "Không tìm thấy tài khoản.");
+
+        var old = user.AvatarUrl;
+        user.AvatarUrl = avatarUrl;
+        Ensure(await users.UpdateAsync(user));
+        return (await ToProfileAsync(user), old);
+    }
+
     public async Task ChangePasswordAsync(string userId, string currentPassword, string newPassword)
     {
         var user = await users.FindByIdAsync(userId)

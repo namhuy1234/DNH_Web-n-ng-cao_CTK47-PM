@@ -23,6 +23,9 @@ public interface IIdentityService
 
     Task<UserProfileDto> UpdateProfileAsync(string userId, string? displayName, string? avatarUrl, string? bio);
 
+    /// <summary>Gán ảnh đại diện mới; trả về hồ sơ và đường dẫn ảnh cũ (để xóa file cũ).</summary>
+    Task<(UserProfileDto Profile, string? OldAvatarUrl)> SetAvatarAsync(string userId, string avatarUrl);
+
     /// <summary>Ném lỗi 400 nếu mật khẩu hiện tại sai.</summary>
     Task ChangePasswordAsync(string userId, string currentPassword, string newPassword);
 

@@ -18,6 +18,11 @@
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.*" />
   </ItemGroup>
 
+  <ItemGroup>
+    <!-- Template email HTML được nhúng vào assembly để chạy được ở mọi thư mục làm việc. -->
+    <EmbeddedResource Include="Email\Templates\*.html" />
+  </ItemGroup>
+
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>

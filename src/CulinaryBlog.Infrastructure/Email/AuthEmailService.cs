@@ -42,23 +42,45 @@ public class AuthEmailService(IOptions<EmailOptions> options, EmailQueue queue, 
     : IAuthEmailService
 {
     private readonly EmailOptions _options = options.Value;
+    private string Site => _options.FrontendBaseUrl.TrimEnd('/');
+
+    public Task SendWelcomeAsync(string email, string displayName, CancellationToken cancellationToken = default)
+    {
+        const string subject = "Chào mừng bạn đến với Culinary Blog";
+        var html = EmailTemplates.Render("welcome", subject, "Tài khoản tác giả của bạn đã sẵn sàng.",
+            new Dictionary<string, string>
+            {
+                ["DisplayName"] = displayName,
+                ["SiteUrl"] = Site,
+                ["DashboardUrl"] = $"{Site}/dashboard"
+            });
+
+        Enqueue(new EmailMessage(email, subject, html));
+        return Task.CompletedTask;
+    }
 
     public Task SendPasswordResetAsync(string email, string displayName, string resetToken, CancellationToken cancellationToken = default)
     {
-        var link = $"{_options.FrontendBaseUrl.TrimEnd('/')}/reset-password" +
+        const string subject = "Đặt lại mật khẩu Culinary Blog";
+        var link = $"{Site}/reset-password" +
                    $"?email={Uri.EscapeDataString(email)}&token={Uri.EscapeDataString(resetToken)}";
 
-        var html = $"""
-            <p>Xin chào {WebUtility.HtmlEncode(displayName)},</p>
-            <p>Bạn (hoặc ai đó) vừa yêu cầu đặt lại mật khẩu tài khoản Culinary Blog.</p>
-            <p><a href="{WebUtility.HtmlEncode(link)}">Bấm vào đây để đặt mật khẩu mới</a>.
-               Liên kết có hiệu lực 30 phút và chỉ dùng được một lần.</p>
-            <p>Nếu không phải bạn yêu cầu, hãy bỏ qua email này; mật khẩu hiện tại vẫn giữ nguyên.</p>
-            """;
+        var html = EmailTemplates.Render("reset-password", subject, "Liên kết đặt mật khẩu mới, hiệu lực 30 phút.",
+            new Dictionary<string, string>
+            {
+                ["DisplayName"] = displayName,
+                ["SiteUrl"] = Site,
+                ["ResetUrl"] = link
+            });
 
-        if (!queue.TryEnqueue(new EmailMessage(email, "Đặt lại mật khẩu Culinary Blog", html)))
-            logger.LogError("Hàng đợi email đầy, bỏ email đặt lại mật khẩu");
+        Enqueue(new EmailMessage(email, subject, html));
         return Task.CompletedTask;
+    }
+
+    private void Enqueue(EmailMessage message)
+    {
+        if (!queue.TryEnqueue(message))
+            logger.LogError("Hàng đợi email đầy, bỏ email \"{Subject}\"", message.Subject);
     }
 }
 

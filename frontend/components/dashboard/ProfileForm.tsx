@@ -8,17 +8,17 @@ import { toast } from "sonner";
 import { ErrorState } from "@/components/common/ErrorState";
 import { LoadingState, Spinner } from "@/components/common/Loading";
 import { FormAlert, TextAreaField, TextField } from "@/components/forms/FormField";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { authApi } from "@/lib/api/auth";
 import { getErrorMessage } from "@/lib/api/errors";
-import { formatDate, getInitials } from "@/lib/format";
+import { formatDate } from "@/lib/format";
 import { applyServerErrors } from "@/lib/forms";
 import { profileSchema, type ProfileValues } from "@/lib/validation/auth";
 import { useAuthStore, useCurrentUser } from "@/store/auth-store";
 import type { UpdateProfileRequest, UserProfileDto } from "@/types";
+import { AvatarUpload } from "./AvatarUpload";
 
 const toValues = (user: UserProfileDto): ProfileValues => ({
   displayName: user.displayName,
@@ -74,7 +74,7 @@ function EditableProfile({ profile, onSaved }: { profile: UserProfileDto; onSave
     control,
     formState: { errors, isDirty },
   } = useForm<ProfileValues>({ resolver: zodResolver(profileSchema), defaultValues: initial });
-  const [displayName, avatarUrl] = useWatch({ control, name: ["displayName", "avatarUrl"] });
+  const displayName = useWatch({ control, name: "displayName" });
 
   const save = useMutation({
     mutationFn: (patch: UpdateProfileRequest) => authApi.updateProfile(patch),
@@ -92,16 +92,12 @@ function EditableProfile({ profile, onSaved }: { profile: UserProfileDto; onSave
   }
 
   const previewName = displayName?.trim() || profile.displayName;
-  const previewAvatar = /^https?:\/\//i.test(avatarUrl ?? "") ? avatarUrl : null;
 
   return (
     <Card className="max-w-2xl">
       <CardHeader>
         <div className="flex items-center gap-4">
-          <Avatar className="size-16">
-            {previewAvatar && <AvatarImage src={previewAvatar} alt={previewName} />}
-            <AvatarFallback className="bg-primary/10 text-lg text-primary">{getInitials(previewName)}</AvatarFallback>
-          </Avatar>
+          <AvatarUpload profile={profile} previewName={previewName} />
           <div className="space-y-1">
             <CardTitle className="text-xl">{previewName}</CardTitle>
             <CardDescription className="flex flex-wrap items-center gap-2">
@@ -124,7 +120,7 @@ function EditableProfile({ profile, onSaved }: { profile: UserProfileDto; onSave
             id="avatarUrl"
             label="Ảnh đại diện (địa chỉ URL)"
             placeholder="https://..."
-            hint="Để trống để dùng chữ viết tắt của tên."
+            hint="Bấm biểu tượng máy ảnh để tải ảnh từ máy, hoặc dán địa chỉ ảnh. Để trống để dùng chữ viết tắt của tên."
             error={errors.avatarUrl?.message}
             {...register("avatarUrl")}
           />

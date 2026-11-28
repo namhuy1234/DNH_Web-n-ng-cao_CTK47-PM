@@ -13,6 +13,7 @@ using Microsoft.Extensions.FileProviders;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.AddSerilogLogging();
 
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
@@ -36,6 +37,9 @@ builder.Services.Configure<RouteHandlerOptions>(o => o.ThrowOnBadRequest = true)
 
 var app = builder.Build();
 
+// Correlation ID đứng đầu để mọi bản ghi phía sau (kể cả lỗi) đều mang mã này.
+app.UseCorrelationId();
+app.UseHttpRequestLogging();
 app.UseMiddleware<GlobalExceptionMiddleware>();
 // Các lỗi không phải exception (404 sai đường dẫn, 405...) cũng trả Problem Details.
 app.UseStatusCodePages();
@@ -69,6 +73,7 @@ app.UseStaticFiles(new StaticFileOptions
 app.UseCors(CorsSetup.Policy);
 app.UseRateLimiter();
 app.UseAuthentication();
+app.UseUserLogContext();
 app.UseAuthorization();
 
 // Môi trường phát triển: tự cập nhật schema và tạo dữ liệu mẫu.
@@ -88,6 +93,7 @@ v1.MapAuthEndpoints();
 v1.MapCategoryEndpoints();
 v1.MapRecipeEndpoints();
 v1.MapRecipeChildEndpoints();
+v1.MapAdminEndpoints();
 app.MapHealthEndpoints();
 
 // Tài liệu API chỉ bật ở môi trường phát triển.

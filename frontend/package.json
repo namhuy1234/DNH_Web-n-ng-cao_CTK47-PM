@@ -9,7 +9,7 @@
     "lint": "eslint",
     "typecheck": "next typegen && tsc --noEmit",
     "check:api": "node scripts/check-types.mjs",
-    "test:utils": "node --test scripts/test-utils.test.ts"
+    "test:utils": "node --test scripts/test-utils.test.ts scripts/test-lab8.test.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^7.0.9",

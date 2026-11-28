@@ -38,6 +38,21 @@ public static class ApiDocsSetup
         ["POST recipes/{id}/images"] = "Tải ảnh lên (tối đa 5MB)",
         ["PATCH recipes/{id}/images/{imageId}"] = "Sửa thông tin ảnh, đặt ảnh chính",
         ["DELETE recipes/{id}/images/{imageId}"] = "Xóa ảnh",
+        // Lab 7
+        ["POST auth/change-password"] = "Đổi mật khẩu, cấp phiên mới",
+        ["POST auth/forgot-password"] = "Gửi email đặt lại mật khẩu",
+        ["POST auth/reset-password"] = "Đặt mật khẩu mới bằng token trong email",
+        // Lab 8
+        ["POST auth/me/avatar"] = "Tải ảnh đại diện (tối đa 5MB)",
+        ["GET recipes/manage"] = "Công thức để quản lý: mọi trạng thái, lọc, tìm theo tên",
+        ["GET recipes/manage/stats"] = "Số công thức theo trạng thái",
+        ["GET recipes/manage/{id}"] = "Lấy công thức theo id để sửa",
+        ["PATCH recipes/{id}/restore"] = "Khôi phục công thức đã xóa về bản nháp",
+        ["GET users"] = "Danh sách người dùng: lọc vai trò, trạng thái (Admin)",
+        ["PATCH users/{id}/lock"] = "Khóa tài khoản, thu hồi mọi phiên (Admin)",
+        ["PATCH users/{id}/unlock"] = "Mở khóa tài khoản (Admin)",
+        ["GET admin/logs"] = "Đọc nhật ký hệ thống theo ngày, mức, từ khóa (Admin)",
+        ["GET admin/logs/files"] = "Các ngày có file nhật ký (Admin)",
     };
 
     /// <summary>Versioning theo đường dẫn /api/v{n} và sinh tài liệu OpenAPI cho phiên bản 1.</summary>

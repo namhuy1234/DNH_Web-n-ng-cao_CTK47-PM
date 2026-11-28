@@ -21,6 +21,8 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\CulinaryBlog.Application\CulinaryBlog.Application.csproj" />
     <ProjectReference Include="..\..\src\CulinaryBlog.Domain\CulinaryBlog.Domain.csproj" />
+    <!-- Lab 8: kiểm thử đọc nhật ký, template email, danh sách chặn token ở tầng hạ tầng. -->
+    <ProjectReference Include="..\..\src\CulinaryBlog.Infrastructure\CulinaryBlog.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

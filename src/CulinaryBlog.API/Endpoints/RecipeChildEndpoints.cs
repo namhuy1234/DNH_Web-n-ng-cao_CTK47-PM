@@ -6,6 +6,19 @@ namespace CulinaryBlog.API.Endpoints;
 
 public record UpdateImageRequest(string? AltText, bool? IsPrimary, int? OrderIndex);
 
+/// <summary>Đọc một file từ form multipart (trường "file").</summary>
+public static class FormFiles
+{
+    public static async Task<IFormFile> ReadSingleAsync(HttpRequest request, CancellationToken ct)
+    {
+        if (!request.HasFormContentType)
+            throw new BadHttpRequestException("Cần gửi multipart/form-data.");
+
+        var form = await request.ReadFormAsync(ct);
+        return form.Files.GetFile("file") ?? throw new BadHttpRequestException("Thiếu trường file.");
+    }
+}
+
 public static class RecipeChildEndpoints
 {
     public static void MapRecipeChildEndpoints(this IEndpointRouteBuilder app)
@@ -44,11 +57,8 @@ public static class RecipeChildEndpoints
         images.MapPost("/", async (
             Guid id, HttpRequest request, ISender sender, CancellationToken ct) =>
         {
-            if (!request.HasFormContentType)
-                throw new BadHttpRequestException("Cần gửi multipart/form-data.");
-
-            var form = await request.ReadFormAsync(ct);
-            var file = form.Files.GetFile("file") ?? throw new BadHttpRequestException("Thiếu trường file.");
+            var file = await FormFiles.ReadSingleAsync(request, ct);
+            var form = request.Form;
             await using var content = file.OpenReadStream();
 
             var image = await sender.Send(new UploadImageCommand(

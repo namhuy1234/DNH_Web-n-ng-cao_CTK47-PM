@@ -484,3 +484,9 @@ $RECYCLE.BIN/
 docs/*.docx
 
 src/CulinaryBlog.API/uploads/
+
+# Nhật ký Serilog (Lab 8)
+src/CulinaryBlog.API/logs/
+/logs/
+# Trang xem nhật ký của frontend là mã nguồn, không phải file log
+!frontend/app/(dashboard)/dashboard/logs/

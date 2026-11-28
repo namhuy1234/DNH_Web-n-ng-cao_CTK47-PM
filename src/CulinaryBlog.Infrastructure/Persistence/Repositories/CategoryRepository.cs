@@ -21,8 +21,10 @@ public class CategoryRepository(CulinaryBlogDbContext db) : Repository<Category>
     public Task<Category?> GetBySlugAsync(string slug, CancellationToken cancellationToken = default)
         => Set.AsNoTracking().FirstOrDefaultAsync(c => c.Slug == slug, cancellationToken);
 
+    // Đếm cả bài trong mục Đã xóa: bài đó còn khôi phục được nên danh mục phải còn tồn tại,
+    // nếu không bài khôi phục xong sẽ trỏ tới danh mục đã xóa và biến mất khỏi mọi danh sách.
     public Task<int> CountRecipesAsync(Guid categoryId, CancellationToken cancellationToken = default)
-        => Db.Recipes.CountAsync(r => r.CategoryId == categoryId, cancellationToken);
+        => Db.Recipes.IgnoreQueryFilters().CountAsync(r => r.CategoryId == categoryId, cancellationToken);
 
     public Task<bool> SlugExistsAsync(string slug, CancellationToken cancellationToken = default)
         => Set.AnyAsync(c => c.Slug == slug, cancellationToken);

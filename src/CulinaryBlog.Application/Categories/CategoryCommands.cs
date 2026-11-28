@@ -92,7 +92,7 @@ public class DeleteCategoryHandler(IUnitOfWork unitOfWork) : IRequestHandler<Del
 
         var count = await unitOfWork.Categories.CountRecipesAsync(category.Id, cancellationToken);
         if (count > 0)
-            throw new ConflictException(ErrorCodes.CategoryDeleteHasRecipes, $"Danh mục còn chứa {count} công thức.");
+            throw new ConflictException(ErrorCodes.CategoryDeleteHasRecipes, $"Danh mục còn chứa {count} công thức (tính cả bài trong mục Đã xóa).");
 
         category.IsDeleted = true; // xóa mềm
         await unitOfWork.SaveChangesAsync(cancellationToken);

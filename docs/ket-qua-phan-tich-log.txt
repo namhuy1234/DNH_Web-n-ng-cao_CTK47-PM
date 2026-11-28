@@ -1,0 +1,52 @@
+Nhật ký ngày 2026-11-27: 6802 bản ghi, 3481 request HTTP
+
+Theo mức:
+  muc          so_ban_ghi
+  -----------  ----------
+  Information  4363      
+  Debug        1978      
+  Warning      449       
+  Error        12        
+
+Endpoint gọi nhiều nhất (top 8):
+  endpoint                                     so_lan  loi_4xx  loi_5xx  tb_ms  p95_ms
+  -------------------------------------------  ------  -------  -------  -----  ------
+  GET /api/v1/categories                       714     24       3        21.2   24.6  
+  GET /api/v1/recipes                          225     0        0        30.6   66.6  
+  GET /api/v1/recipes/search                   219     5        0        32.8   108.7 
+  GET /api/v1/recipes/che-ba-mau-kieu-nha-lam  200     0        0        24.6   33.4  
+  POST /api/v1/auth/login                      159     89       0        124.2  270.5 
+  GET /api/v1/recipes/manage                   149     19       0        128.8  267.4 
+  GET /api/v1/recipes/manage/stats             122     7        0        137.1  2050.4
+  GET /api/v1/recipes/manage/{id}              120     18       0        31.9   92.2  
+
+Request chậm hơn 500 ms: 34
+  luc       request                             ms    ma_yeu_cau  
+  --------  ----------------------------------  ----  ------------
+  16:17:31  GET /api/v1/recipes/manage          2426  1a327dffd34b
+  16:18:45  PATCH /api/v1/recipes/{id}/archive  2358  ea88e0eb851e
+  16:29:03  GET /api/v1/recipes/manage/stats    2254  8f5d0e6e8a02
+  16:17:48  GET /api/v1/recipes/manage          2252  fa7f5f7a47cd
+  16:29:03  GET /api/v1/recipes/manage          2243  2617867c618f
+  16:17:48  GET /api/v1/recipes/manage/stats    2204  7d8efce8c628
+  16:18:06  GET /api/v1/recipes/manage          2160  b9dc5df460a5
+  16:27:57  POST /api/v1/recipes/{id}/images    2156  3df0de57b3dd
+
+Người dùng gọi API nhiều nhất:
+  user_id                               so_request
+  ------------------------------------  ----------
+  9d036662-9cb6-4dc2-9fa9-1a4b4955b13f  267       
+  aa30c5b5-e064-4a64-915e-401684205400  51        
+  e3c94b92-35b2-4e09-967e-1bf7a205e5c7  51        
+  6db4937a-84c4-4478-ab7a-f5ad74d05a39  51        
+  b547532c-95e3-4b95-a0d7-58e6aabf3efd  51        
+
+Lỗi (Error/Fatal): 12
+  16:41:08  An error occurred using the connection to database '{database}' on server '{server}'.
+  16:41:08  An exception occurred while iterating over the results of a query for context type '{contextType}'.{newline}{error}
+  16:41:08  Lỗi chưa xử lý tại {Method} {Path}
+  16:41:08  HTTP {RequestMethod} {RequestPath} trả {StatusCode} trong {Elapsed:0.0} ms
+  16:41:26  An error occurred using the connection to database '{database}' on server '{server}'.
+  16:41:26  An exception occurred while iterating over the results of a query for context type '{contextType}'.{newline}{error}
+  16:41:26  Lỗi chưa xử lý tại {Method} {Path}
+  16:41:27  HTTP {RequestMethod} {RequestPath} trả {StatusCode} trong {Elapsed:0.0} ms

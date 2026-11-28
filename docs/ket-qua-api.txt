@@ -1,6 +1,6 @@
-﻿Ket qua kiem thu API - chay ngay 27/11/2026 17:40
+﻿Ket qua kiem thu API - chay ngay 28/11/2026 08:07
 Dat 74/74 truong hop
-Du lieu sau khi don: 24 danh muc, 120 cong thuc
+Du lieu sau khi don: 26 danh muc, 153 cong thuc
 
 == Health checks ==
 [DAT] 200 GET    /health

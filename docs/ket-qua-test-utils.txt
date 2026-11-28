@@ -1,42 +1,94 @@
-Unit test frontend - chay ngay 27/11/2026 22:09
-Lenh: npm run test:utils
-
-  ✔ hiện đủ khi ít trang
-  ✔ rút gọn hai đầu khi ở giữa
-  ✔ rút gọn một phía khi ở đầu
-  ✔ trang vượt quá bị kẹp về trang cuối
-  ✔ không có trang
-✔ getPageItems
-  ✔ đọc số hợp lệ
-  ✔ giá trị sai trả về 1
-  ✔ lấy phần tử đầu của mảng
-✔ parsePage
-  ✔ formatDuration
-  ✔ formatDate theo giờ Việt Nam dù máy chạy múi giờ khác
-  ✔ formatDate theo kiểu Việt Nam
-  ✔ formatDate chuỗi sai trả về rỗng
-  ✔ getInitials
-✔ format
-  ✔ dùng detail của ProblemDetails
-  ✔ không có detail thì dùng câu mặc định theo mã
-  ✔ mất mạng và quá thời gian chờ
-  ✔ lỗi theo trường đổi về camelCase
-  ✔ Error thường giữ nguyên message
-✔ ApiError / toApiError
-  ✔ giữ đường dẫn nội bộ
-  ✔ không quay lại trang đăng nhập/đăng ký (tránh vòng lặp)
-  ✔ chặn chuyển hướng ra ngoài
-✔ safeRedirect
-  ✔ parseRecipeFilters bỏ giá trị lạ
-  ✔ parseRecipeFilters nhận categoryId dạng GUID và số trang
-  ✔ filterQuery bỏ trang và giá trị mặc định
-✔ recipe-search
-  ✔ đăng nhập cần email hợp lệ và mật khẩu
-  ✔ đăng ký: mật khẩu mạnh và nhập lại khớp
-  ✔ đổi mật khẩu: mật khẩu mới phải khác mật khẩu cũ
-  ✔ đặt lại mật khẩu: nhập lại phải khớp
-  ✔ hồ sơ: ảnh đại diện phải là http/https hoặc để trống
-✔ validation (Zod) khớp quy tắc backend
-ℹ tests 29
-ℹ pass 29
+> frontend@0.1.0 test:utils
+> node --test scripts/test-utils.test.ts scripts/test-lab8.test.ts
+(node:5648) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/My%20PC/OneDrive/Videos/Ph%C3%A1t%20tri%E1%BB%83n%20%E1%BB%A9ng%20d%E1%BB%A5ng%20Web%20n%C3%A2ng%20cao%20-%20CTK47-PM/WebNangCao_bailam/lab08_2312632_DangNamHuy/frontend/scripts/test-lab8.test.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to C:\Users\My PC\OneDrive\Videos\Phát triển ứng dụng Web nâng cao - CTK47-PM\WebNangCao_bailam\lab08_2312632_DangNamHuy\frontend\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+▶ recipeFormSchema
+  ✔ đổi ô số dạng chuỗi sang number, ô trống thành null (15.0065ms)
+  ✔ báo lỗi tên món quá ngắn, thời gian không phải số, số lượng âm (3.4795ms)
+  ✔ form mới có giá trị mặc định hợp lệ trừ các ô bắt buộc (6.2846ms)
+✔ recipeFormSchema (27.1232ms)
+▶ chuyển form sang request
+  ✔ tạo mới gửi kèm nguyên liệu và bước đã đánh số (1.5308ms)
+  ✔ cập nhật luôn gửi dinh dưỡng và rowVersion (1.5632ms)
+  ✔ basicsChanged chỉ đúng khi thông tin chính đổi (11.2809ms)
+✔ chuyển form sang request (16.2178ms)
+▶ planChildChanges
+  ✔ phân loại dòng thêm, sửa, xóa (5.7014ms)
+  ✔ không có thay đổi thì kế hoạch rỗng (4.4439ms)
+✔ planChildChanges (14.8635ms)
+▶ planStepMoves
+  ✔ đã đúng thứ tự thì không chuyển (1.4239ms)
+  ✔ đảo bước cuối lên đầu chỉ cần 1 lần (0.6058ms)
+  ✔ đảo ngược toàn bộ (0.4172ms)
+  ✔ bỏ qua bước đã xóa (2.2412ms)
+✔ planStepMoves (5.1882ms)
+▶ trạng thái công thức
+  ✔ bản nháp: đăng hoặc xóa (0.6162ms)
+  ✔ đã đăng: gỡ, lưu trữ, xóa (0.2016ms)
+  ✔ lưu trữ: đăng lại, về nháp, xóa (0.2943ms)
+  ✔ đã xóa: chỉ khôi phục (0.1924ms)
+  ✔ checklist đăng bài (0.2814ms)
+✔ trạng thái công thức (1.9636ms)
+▶ kiểm tra ảnh ở trình duyệt
+  ✔ nhận JPEG nhỏ (0.299ms)
+  ✔ từ chối GIF và SVG (0.789ms)
+  ✔ từ chối ảnh quá 5 MB (0.5098ms)
+  ✔ formatBytes (0.3783ms)
+✔ kiểm tra ảnh ở trình duyệt (2.2261ms)
+(node:24164) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/My%20PC/OneDrive/Videos/Ph%C3%A1t%20tri%E1%BB%83n%20%E1%BB%A9ng%20d%E1%BB%A5ng%20Web%20n%C3%A2ng%20cao%20-%20CTK47-PM/WebNangCao_bailam/lab08_2312632_DangNamHuy/frontend/scripts/test-utils.test.ts is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to C:\Users\My PC\OneDrive\Videos\Phát triển ứng dụng Web nâng cao - CTK47-PM\WebNangCao_bailam\lab08_2312632_DangNamHuy\frontend\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+▶ getPageItems
+  ✔ hiện đủ khi ít trang (3.219ms)
+  ✔ rút gọn hai đầu khi ở giữa (0.3222ms)
+  ✔ rút gọn một phía khi ở đầu (0.2426ms)
+  ✔ trang vượt quá bị kẹp về trang cuối (0.2557ms)
+  ✔ không có trang (0.2348ms)
+✔ getPageItems (6.745ms)
+▶ parsePage
+  ✔ đọc số hợp lệ (0.3721ms)
+  ✔ giá trị sai trả về 1 (0.2966ms)
+  ✔ lấy phần tử đầu của mảng (0.2473ms)
+✔ parsePage (1.2944ms)
+▶ format
+  ✔ formatDuration (0.6213ms)
+  ✔ formatDate theo giờ Việt Nam dù máy chạy múi giờ khác (1.3134ms)
+  ✔ formatDate theo kiểu Việt Nam (0.2667ms)
+  ✔ formatDate chuỗi sai trả về rỗng (0.1722ms)
+  ✔ getInitials (0.4969ms)
+✔ format (3.3852ms)
+▶ ApiError / toApiError
+  ✔ dùng detail của ProblemDetails (0.7586ms)
+  ✔ không có detail thì dùng câu mặc định theo mã (0.35ms)
+  ✔ mất mạng và quá thời gian chờ (0.4215ms)
+  ✔ lỗi theo trường đổi về camelCase (0.4217ms)
+  ✔ Error thường giữ nguyên message (0.1663ms)
+✔ ApiError / toApiError (2.4104ms)
+▶ safeRedirect
+  ✔ giữ đường dẫn nội bộ (0.452ms)
+  ✔ không quay lại trang đăng nhập/đăng ký (tránh vòng lặp) (0.2669ms)
+  ✔ chặn chuyển hướng ra ngoài (0.1842ms)
+✔ safeRedirect (1.0765ms)
+▶ recipe-search
+  ✔ parseRecipeFilters bỏ giá trị lạ (0.5036ms)
+  ✔ parseRecipeFilters nhận categoryId dạng GUID và số trang (0.2153ms)
+  ✔ filterQuery bỏ trang và giá trị mặc định (0.2421ms)
+✔ recipe-search (1.1428ms)
+▶ validation (Zod) khớp quy tắc backend
+  ✔ đăng nhập cần email hợp lệ và mật khẩu (4.5578ms)
+  ✔ đăng ký: mật khẩu mạnh và nhập lại khớp (4.5613ms)
+  ✔ đổi mật khẩu: mật khẩu mới phải khác mật khẩu cũ (1.411ms)
+  ✔ đặt lại mật khẩu: nhập lại phải khớp (0.8308ms)
+  ✔ hồ sơ: ảnh đại diện phải là http/https hoặc để trống (1.3126ms)
+✔ validation (Zod) khớp quy tắc backend (13.0261ms)
+ℹ tests 50
+ℹ suites 13
+ℹ pass 50
 ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 3387.6179

@@ -33,7 +33,7 @@ export default function RecipeDetailPage({ params }: PageProps<"/recipes/[slug]"
 
 async function RecipeContent({ params }: Pick<PageProps<"/recipes/[slug]">, "params">) {
   const { slug } = await params;
-  // Không có, đã xóa hoặc là bản nháp (API trả 404 với người chưa đăng nhập) -> trang 404.
+  // Không có, đã xóa (API trả 404) hoặc chưa công khai: bản nháp, lưu trữ (API trả 403) -> trang 404.
   const recipe = await getRecipe(slug);
   if (!recipe) notFound();
 

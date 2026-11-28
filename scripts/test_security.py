@@ -70,7 +70,7 @@ section('Tai lieu API')
 status, _, body = send('GET', '/openapi/v1.json')
 document = json.loads(body) if status == 200 else {}
 operations = [o for p in document.get('paths', {}).values() for o in p.values()]
-check('/openapi/v1.json co 30 endpoint /api/v1', status == 200 and len(operations) == 30
+check('/openapi/v1.json co 43 endpoint /api/v1', status == 200 and len(operations) == 43
       and all(p.startswith('/api/v1/') for p in document['paths']), f'{status}, {len(operations)} operation')
 check('Moi endpoint co mo ta', bool(operations) and all(o.get('summary') for o in operations),
       f"{sum(1 for o in operations if o.get('summary'))}/{len(operations)}")

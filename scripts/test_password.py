@@ -12,6 +12,10 @@ import time
 import urllib.error
 import urllib.parse
 import urllib.request
+import sys
+
+# Cửa sổ dòng lệnh Windows mặc định không in được tiếng Việt.
+sys.stdout.reconfigure(encoding="utf-8")
 
 API = "http://localhost:5000/api/v1"
 MAILHOG = "http://localhost:8025/api/v2"
@@ -43,20 +47,24 @@ def reset_link(email):
     for _ in range(20):
         with urllib.request.urlopen(f"{MAILHOG}/search?kind=to&query={urllib.parse.quote(email)}") as r:
             items = json.load(r)["items"]
-        if items:
+        if any("reset-password" in i["Raw"]["Data"] or "reset-password" in i["Content"]["Body"] for i in items):
             break
         time.sleep(0.5)
     if not items:
         return None
-    content = items[0]["Content"]
-    body = content["Body"]
-    encoding = content["Headers"].get("Content-Transfer-Encoding", [""])[0].lower()
-    if encoding == "base64":
-        body = base64.b64decode(body).decode("utf-8")
-    elif encoding == "quoted-printable":
-        body = quopri.decodestring(body.encode()).decode("utf-8")
-    m = re.search(r'href="([^"]+reset-password[^"]+)"', body)
-    return m.group(1).replace("&amp;", "&") if m else None
+    # Từ Lab 8 hộp thư còn có email chào mừng lúc đăng ký: duyệt hết để tìm email đặt lại mật khẩu.
+    for item in items:
+        content = item["Content"]
+        body = content["Body"]
+        encoding = content["Headers"].get("Content-Transfer-Encoding", [""])[0].lower()
+        if encoding == "base64":
+            body = base64.b64decode(body).decode("utf-8")
+        elif encoding == "quoted-printable":
+            body = quopri.decodestring(body.encode()).decode("utf-8")
+        m = re.search(r'href="([^"]+reset-password[^"]+)"', body)
+        if m:
+            return m.group(1).replace("&amp;", "&")
+    return None
 
 
 suffix = secrets.token_hex(4)

@@ -6,5 +6,7 @@ namespace CulinaryBlog.Application.Common;
 /// </summary>
 public interface IAuthEmailService
 {
+    Task SendWelcomeAsync(string email, string displayName, CancellationToken cancellationToken = default);
+
     Task SendPasswordResetAsync(string email, string displayName, string resetToken, CancellationToken cancellationToken = default);
 }

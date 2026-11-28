@@ -4,15 +4,18 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { DASHBOARD_NAV } from "@/lib/constants";
 import { cn } from "@/lib/utils";
+import { useIsAdmin } from "@/store/auth-store";
 import { isActivePath } from "./MainNav";
 
 export function DashboardSidebar() {
   const pathname = usePathname();
-  const hrefs = DASHBOARD_NAV.map((item) => item.href);
+  const isAdmin = useIsAdmin();
+  const items = DASHBOARD_NAV.filter((item) => !item.adminOnly || isAdmin);
+  const hrefs = items.map((item) => item.href);
 
   return (
     <nav className="flex gap-1 overflow-x-auto lg:flex-col" aria-label="Menu quản lý">
-      {DASHBOARD_NAV.map(({ href, title, icon: Icon }) => {
+      {items.map(({ href, title, icon: Icon }) => {
         // /dashboard chỉ sáng ở đúng trang tổng quan.
         const active = href === "/dashboard" ? pathname === href : isActivePath(pathname, href, hrefs);
         return (

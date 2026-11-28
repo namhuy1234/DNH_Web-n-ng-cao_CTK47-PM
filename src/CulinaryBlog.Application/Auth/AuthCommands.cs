@@ -21,12 +21,14 @@ public class RegisterValidator : AbstractValidator<RegisterCommand>
     }
 }
 
-public class RegisterHandler(IIdentityService identity, SessionIssuer sessions)
+public class RegisterHandler(IIdentityService identity, SessionIssuer sessions, IAuthEmailService emails)
     : IRequestHandler<RegisterCommand, AuthResponseDto>
 {
     public async Task<AuthResponseDto> Handle(RegisterCommand request, CancellationToken cancellationToken)
     {
         var user = await identity.RegisterAsync(request.Email.Trim(), request.Password, request.DisplayName.Trim());
+        // Email đi qua hàng đợi chạy nền nên không làm chậm việc đăng ký.
+        await emails.SendWelcomeAsync(user.Email, user.DisplayName, cancellationToken);
         return await sessions.IssueAsync(user, cancellationToken);
     }
 }
@@ -92,6 +94,13 @@ public class RefreshTokenHandler(
         if (stored.RevokedAt is null && stored.ExpiresAt <= DateTime.UtcNow)
             throw new UnauthorizedException(ErrorCodes.AuthRefreshTokenExpired, "Refresh token đã hết hạn.");
 
+        // Token đã bị thu hồi (đăng xuất, đổi mật khẩu, bị khóa) mà vẫn gửi lại: 401, thu hồi toàn bộ phòng bị lộ.
+        if (stored.RevokedAt is not null)
+        {
+            await refreshTokens.RevokeAllAsync(stored.UserId, cancellationToken);
+            throw new UnauthorizedException(ErrorCodes.AuthRefreshTokenRevoked, "Refresh token đã bị thu hồi.");
+        }
+
         var user = await identity.GetProfileAsync(stored.UserId)
             ?? throw new UnauthorizedException(ErrorCodes.AuthRefreshTokenInvalid, "Tài khoản không còn tồn tại.");
         await identity.EnsureCanSignInAsync(user.Id);
@@ -152,8 +161,9 @@ public class UpdateProfileValidator : AbstractValidator<UpdateProfileCommand>
             .When(x => x.DisplayName is not null);
         RuleFor(x => x.AvatarUrl)
             .MaximumLength(500)
-            .Must(url => Uri.TryCreate(url, UriKind.Absolute, out var uri) && (uri.Scheme == "http" || uri.Scheme == "https"))
-            .WithMessage("avatarUrl phải là địa chỉ http/https.")
+            .Must(url => AvatarRules.IsUploaded(url!) ||
+                         (Uri.TryCreate(url, UriKind.Absolute, out var uri) && (uri.Scheme == "http" || uri.Scheme == "https")))
+            .WithMessage("avatarUrl phải là địa chỉ http/https hoặc ảnh đã tải lên.")
             .When(x => !string.IsNullOrEmpty(x.AvatarUrl));
         RuleFor(x => x.Bio).MaximumLength(1000).WithMessage("Tiểu sử tối đa 1000 ký tự.");
     }

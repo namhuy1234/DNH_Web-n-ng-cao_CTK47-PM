@@ -16,13 +16,15 @@ export function toQueryString(query: Query = {}) {
   return text ? `?${text}` : "";
 }
 
-/** GET từ phía server; trả null khi 404, ném lỗi cho các mã khác. */
+/** GET từ phía server; trả null khi 404 hoặc 403, ném lỗi cho các mã khác. */
 export async function apiGet<T>(path: string, query?: Query): Promise<T | null> {
   // Giới hạn thời gian chờ để trang không treo khi API không phản hồi.
   const response = await fetch(`${API_URL}/api/v1${path}${toQueryString(query)}`, {
     signal: AbortSignal.timeout(5000),
   });
-  if (response.status === 404) return null;
+  // Server gọi API không kèm token (khách). Bài nháp/lưu trữ trả 403 cho khách: với người xem
+  // thì cũng là "không có", nên coi như 404 để hiện trang Không tìm thấy thay vì làm vỡ trang.
+  if (response.status === 404 || response.status === 403) return null;
 
   if (!response.ok) {
     const problem = (await response.json().catch(() => ({}))) as ProblemDetails;

@@ -1,6 +1,3 @@
-Kiem thu giao dien Lab 7 bang Playwright - chay ngay 27/11/2026 22:07
-Lenh: python scripts/test_lab7_ui.py
-
 DAT Trang chủ có header và footer
 DAT Sidebar hiện danh sách danh mục từ API  (24 danh mục)
 DAT Main content hiện 9 công thức mới  (9 thẻ)

@@ -1,4 +1,16 @@
-import { BookOpen, ChefHat, FilePlus2, Home, KeyRound, LayoutDashboard, LayoutGrid, Search, UserRound } from "lucide-react";
+import {
+  BookOpen,
+  ChefHat,
+  FilePlus2,
+  Home,
+  KeyRound,
+  LayoutDashboard,
+  LayoutGrid,
+  ScrollText,
+  Search,
+  UserRound,
+  Users,
+} from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
 export const SITE = {
@@ -11,6 +23,8 @@ export interface NavItem {
   title: string;
   href: string;
   icon: LucideIcon;
+  /** Chỉ hiện với quản trị viên. */
+  adminOnly?: boolean;
 }
 
 /** Menu chính ở header. */
@@ -28,6 +42,8 @@ export const DASHBOARD_NAV: NavItem[] = [
   { title: "Viết công thức", href: "/dashboard/recipes/new", icon: FilePlus2 },
   { title: "Hồ sơ", href: "/dashboard/profile", icon: UserRound },
   { title: "Đổi mật khẩu", href: "/dashboard/password", icon: KeyRound },
+  { title: "Người dùng", href: "/dashboard/users", icon: Users, adminOnly: true },
+  { title: "Nhật ký hệ thống", href: "/dashboard/logs", icon: ScrollText, adminOnly: true },
 ];
 
 export const RECIPES_PAGE_SIZE = 12;

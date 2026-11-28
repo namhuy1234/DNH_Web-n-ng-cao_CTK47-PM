@@ -28,6 +28,17 @@ public static class RecipeEndpoints
             Results.Ok(await sender.Send(
                 new SearchRecipesQuery(q, page, pageSize, categoryId, ParseDifficulty(difficulty)), ct)));
 
+        // Trang quản lý (Lab 8). Đường dẫn cố định "/manage" được ưu tiên hơn "/{slug}".
+        var manage = group.MapGroup("/manage").RequireAuthorization(AuthSetup.AuthorPolicy);
+        manage.MapGet("/", async (
+            ISender sender, CancellationToken ct,
+            int page = 1, int pageSize = 10, string? status = null, string? q = null, string scope = RecipeScope.Mine) =>
+            Results.Ok(await sender.Send(new GetManagedRecipesQuery(page, pageSize, status, q, scope), ct)));
+        manage.MapGet("/stats", async (ISender sender, CancellationToken ct, string scope = RecipeScope.Mine) =>
+            Results.Ok(await sender.Send(new GetRecipeStatsQuery(scope), ct)));
+        manage.MapGet("/{id:guid}", async (Guid id, ISender sender, CancellationToken ct) =>
+            Results.Ok(await sender.Send(new GetRecipeForEditQuery(id), ct)));
+
         group.MapGet("/{slug}", async (string slug, ISender sender, CancellationToken ct) =>
             Results.Ok(await sender.Send(new GetRecipeBySlugQuery(slug), ct)));
 
@@ -64,6 +75,10 @@ public static class RecipeEndpoints
             write.MapPatch($"/{{id:guid}}/{path}", async (Guid id, ISender sender, CancellationToken ct) =>
                 Results.Ok(await sender.Send(new ChangeRecipeStatusCommand(id, action), ct)));
         }
+
+        // Khôi phục bài đã xóa mềm, đưa về bản nháp.
+        write.MapPatch("/{id:guid}/restore", async (Guid id, ISender sender, CancellationToken ct) =>
+            Results.Ok(await sender.Send(new RestoreRecipeCommand(id), ct)));
     }
 
     // Binding enum mặc định phân biệt hoa thường nên tự đọc; giá trị ngoài enum do validator chặn.

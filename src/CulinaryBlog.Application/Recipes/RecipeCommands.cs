@@ -6,6 +6,7 @@ using CulinaryBlog.Domain.Exceptions;
 using CulinaryBlog.Domain.Repositories;
 using FluentValidation;
 using MediatR;
+using Microsoft.Extensions.Logging;
 
 namespace CulinaryBlog.Application.Recipes;
 
@@ -97,7 +98,8 @@ public class CreateRecipeHandler(IUnitOfWork unitOfWork, ICurrentUser currentUse
         // Slug dài tối đa 220, chừa chỗ cho hậu tố khi trùng.
         var baseSlug = SlugHelper.Generate(request.Title);
         if (baseSlug.Length > 200) baseSlug = baseSlug[..200].TrimEnd('-');
-        if (baseSlug == "search") baseSlug = "search-recipe"; // tránh trùng đường dẫn /recipes/search
+        // Tránh trùng các đường dẫn cố định /recipes/search và /recipes/manage.
+        if (baseSlug is "search" or "manage") baseSlug += "-recipe";
 
         var slug = baseSlug;
         for (var i = 2; await unitOfWork.Recipes.SlugExistsAsync(slug, cancellationToken); i++)
@@ -177,7 +179,8 @@ public enum RecipeAction { Publish, Unpublish, Archive }
 
 public record ChangeRecipeStatusCommand(Guid Id, RecipeAction Action) : IRequest<RecipeDetailDto>;
 
-public class ChangeRecipeStatusHandler(IUnitOfWork unitOfWork, RecipeAccess access, RecipeDetailReader reader)
+public class ChangeRecipeStatusHandler(
+    IUnitOfWork unitOfWork, RecipeAccess access, RecipeDetailReader reader, ILogger<ChangeRecipeStatusHandler> logger)
     : IRequestHandler<ChangeRecipeStatusCommand, RecipeDetailDto>
 {
     public async Task<RecipeDetailDto> Handle(ChangeRecipeStatusCommand request, CancellationToken cancellationToken)
@@ -192,6 +195,8 @@ public class ChangeRecipeStatusHandler(IUnitOfWork unitOfWork, RecipeAccess acce
         }
 
         await unitOfWork.SaveChangesAsync(cancellationToken);
+        logger.LogInformation("Công thức {RecipeId} ({Slug}) chuyển sang trạng thái {Status}",
+            recipe.Id, recipe.Slug, recipe.Status);
 
         return (await reader.ReadAsync(recipe.Slug, cancellationToken)).Dto;
     }
@@ -200,12 +205,15 @@ public class ChangeRecipeStatusHandler(IUnitOfWork unitOfWork, RecipeAccess acce
 // ----- Xóa (FR-RCP-007) -----
 public record DeleteRecipeCommand(Guid Id) : IRequest;
 
-public class DeleteRecipeHandler(IUnitOfWork unitOfWork, RecipeAccess access) : IRequestHandler<DeleteRecipeCommand>
+public class DeleteRecipeHandler(IUnitOfWork unitOfWork, RecipeAccess access, ILogger<DeleteRecipeHandler> logger)
+    : IRequestHandler<DeleteRecipeCommand>
 {
     public async Task Handle(DeleteRecipeCommand request, CancellationToken cancellationToken)
     {
         var recipe = await access.GetOwnedAsync(request.Id, cancellationToken);
         recipe.IsDeleted = true; // xóa mềm theo NFR-REL-003, có thể khôi phục
+        recipe.Touch();
         await unitOfWork.SaveChangesAsync(cancellationToken);
+        logger.LogInformation("Xóa mềm công thức {RecipeId} ({Slug})", recipe.Id, recipe.Slug);
     }
 }

@@ -36,9 +36,17 @@ public class RecipeSummaryMapper(IUserReader users)
 public class RecipeDetailReader(IUnitOfWork unitOfWork, IUserReader users)
 {
     public async Task<(Recipe Recipe, RecipeDetailDto Dto)> ReadAsync(string slug, CancellationToken cancellationToken)
+        => await MapAsync(await unitOfWork.Recipes.GetDetailBySlugAsync(slug, cancellationToken)
+            ?? throw new NotFoundException(ErrorCodes.RecipeNotFound, $"Không tìm thấy công thức '{slug}'."),
+            cancellationToken);
+
+    public async Task<(Recipe Recipe, RecipeDetailDto Dto)> ReadByIdAsync(Guid id, CancellationToken cancellationToken)
+        => await MapAsync(await unitOfWork.Recipes.GetDetailByIdAsync(id, cancellationToken)
+            ?? throw new NotFoundException(ErrorCodes.RecipeNotFound, "Không tìm thấy công thức."),
+            cancellationToken);
+
+    private async Task<(Recipe Recipe, RecipeDetailDto Dto)> MapAsync(Recipe r, CancellationToken cancellationToken)
     {
-        var r = await unitOfWork.Recipes.GetDetailBySlugAsync(slug, cancellationToken)
-            ?? throw new NotFoundException(ErrorCodes.RecipeNotFound, $"Không tìm thấy công thức '{slug}'.");
         var authors = await users.GetDisplayNamesAsync([r.AuthorId], cancellationToken);
         var n = r.Nutrition;
 

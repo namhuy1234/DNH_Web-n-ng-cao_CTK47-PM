@@ -12,6 +12,10 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using CulinaryBlog.Application.Admin;
+using CulinaryBlog.Application.Users;
+using CulinaryBlog.Infrastructure.Logging;
 
 namespace CulinaryBlog.Infrastructure;
 
@@ -57,6 +61,12 @@ public static class DependencyInjection
         services.AddScoped<IGoogleTokenVerifier, GoogleTokenVerifier>();
         services.AddScoped<IFileStorageService, LocalFileStorageService>();
         services.AddScoped<DbSeeder>();
+
+        // Lab 8: quản lý người dùng và đọc nhật ký hệ thống.
+        services.TryAddSingleton(TimeProvider.System);
+        services.AddScoped<IUserAdminService, UserAdminService>();
+        services.AddSingleton<IAccessBlocklist, AccessBlocklist>();
+        services.AddSingleton<ISystemLogReader, SystemLogReader>();
 
         return services;
     }

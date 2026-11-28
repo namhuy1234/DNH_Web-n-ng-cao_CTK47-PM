@@ -65,7 +65,9 @@ export const profileSchema = z.object({
     .string()
     .trim()
     .max(500, { error: "Địa chỉ ảnh tối đa 500 ký tự." })
-    .refine((v) => v === "" || /^https?:\/\/\S+$/i.test(v), { error: "Địa chỉ ảnh phải bắt đầu bằng http:// hoặc https://." }),
+    .refine((v) => v === "" || /^https?:\/\/\S+$/i.test(v) || /^\/uploads\/avatars\/[^\s.][^\s]*$/.test(v), {
+      error: "Địa chỉ ảnh phải bắt đầu bằng http:// hoặc https://.",
+    }),
   bio: z.string().trim().max(1000, { error: "Giới thiệu tối đa 1000 ký tự." }),
 });
 

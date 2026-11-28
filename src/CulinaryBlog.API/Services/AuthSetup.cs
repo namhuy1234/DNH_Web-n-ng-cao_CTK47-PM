@@ -1,4 +1,5 @@
 using System.Text;
+using CulinaryBlog.Application.Users;
 using CulinaryBlog.Infrastructure.Identity;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -29,6 +30,18 @@ public static class AuthSetup
                     ClockSkew = TimeSpan.FromSeconds(30),
                     NameClaimType = "sub",
                     RoleClaimType = "role"
+                };
+                // Tài khoản bị quản trị viên khóa thì token cũ (còn hạn tới 15 phút) bị từ chối ngay.
+                options.Events = new JwtBearerEvents
+                {
+                    OnTokenValidated = context =>
+                    {
+                        var userId = context.Principal?.FindFirst("sub")?.Value;
+                        var blocklist = context.HttpContext.RequestServices.GetRequiredService<IAccessBlocklist>();
+                        if (userId is not null && blocklist.IsBlocked(userId))
+                            context.Fail("Tài khoản đã bị khóa.");
+                        return Task.CompletedTask;
+                    }
                 };
             });
 

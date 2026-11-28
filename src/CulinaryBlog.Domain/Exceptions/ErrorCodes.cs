@@ -28,4 +28,6 @@ public static class ErrorCodes
     public const string ImageNotFound = "IMAGE_NOT_FOUND";
     public const string FileSizeExceeded = "FILE_SIZE_EXCEEDED";
     public const string FileMimeInvalid = "FILE_MIME_INVALID";
+    public const string UserLockForbidden = "USER_LOCK_FORBIDDEN";
+    public const string LogDateInvalid = "LOG_DATE_INVALID";
 }

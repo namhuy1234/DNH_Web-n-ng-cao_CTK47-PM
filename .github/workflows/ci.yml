@@ -36,3 +36,24 @@ jobs:
       - run: npm run lint
       - run: npm run test:utils
       - run: npm run build
+
+  tools:
+    # Lab 8: các công cụ viết bằng ngôn ngữ khác phải ít nhất biên dịch/cú pháp đúng.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - run: node --check tools/load-test.mjs
+      - run: python -m py_compile tools/log_report.py scripts/*.py
+      - run: bash -n scripts/run-tests.sh
+      - name: Kiểm tra cú pháp PowerShell
+        shell: pwsh
+        run: |
+          $errors = $null
+          [System.Management.Automation.Language.Parser]::ParseFile("$PWD/scripts/check-health.ps1", [ref]$null, [ref]$errors) | Out-Null
+          if ($errors) { $errors; exit 1 }
