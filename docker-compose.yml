@@ -10,7 +10,7 @@ services:
       # Mật khẩu chỉ dùng cho môi trường phát triển trên máy cá nhân
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-culinary_dev_only}
     ports:
-      - "127.0.0.1:5432:5432"
+      - "127.0.0.1:${POSTGRES_PORT:-5432}:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:
@@ -22,6 +22,8 @@ services:
   # Hộp thư giả cho môi trường phát triển: nhận email qua SMTP 1025, xem tại http://localhost:8025
   mailhog:
     image: mailhog/mailhog:v1.0.1
+    # Ảnh chỉ có bản amd64; ghi rõ để máy Mac chip Apple vẫn chạy được (qua giả lập).
+    platform: linux/amd64
     container_name: culinary-mailhog
     ports:
       - "127.0.0.1:1025:1025"

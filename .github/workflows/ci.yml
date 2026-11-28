@@ -57,3 +57,17 @@ jobs:
           $errors = $null
           [System.Management.Automation.Language.Parser]::ParseFile("$PWD/scripts/check-health.ps1", [ref]$null, [ref]$errors) | Out-Null
           if ($errors) { $errors; exit 1 }
+
+  smoke:
+    # Chạy thử như trên một máy mới tinh: Docker, API tự tạo database và dữ liệu mẫu, frontend,
+    # rồi gọi các địa chỉ chính. Đạt nghĩa là clone về máy khác là chạy được.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - run: bash scripts/smoke-test.sh

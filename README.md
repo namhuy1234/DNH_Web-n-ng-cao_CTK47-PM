@@ -263,3 +263,49 @@ cmd /c "docker exec -i culinary-postgres psql -U culinary -d culinaryblog < scri
 | Lưu công thức lỗi giữa chừng thì lần lưu sau báo 409 hoặc thêm trùng nguyên liệu | Form vẫn giữ rowVersion cũ và không biết id dòng vừa tạo | `PartialSaveError`: nạp lại bản mới nhất, ghi id dòng mới vào form |
 | Xóa bài cuối của trang cuối thì bảng báo trống và mất phân trang | Trang hiện tại vượt quá tổng số trang | Tự lùi về trang cuối còn dữ liệu (công thức và người dùng) |
 | Mở bài nháp/lưu trữ ở trang công khai làm vỡ trang (React #419) | API trả 403 cho khách nhưng frontend chỉ coi 404 là "không có" | `apiGet` coi 403 như 404 để hiện trang Không tìm thấy |
+
+## Chạy trên máy khác
+
+Cần cài: Docker Desktop, .NET SDK 10, Node.js 20.9 trở lên (nên dùng bản LTS), Git (hoặc tải ZIP). Không cần cài PostgreSQL.
+
+**Windows** – clone (hoặc trên GitHub chọn nhánh `huy-lab8` → Code → Download ZIP rồi giải nén) và chạy:
+
+```powershell
+git clone https://github.com/namhuy1234/DNH_Web-n-ng-cao_CTK47-PM.git
+```
+```powershell
+cd DNH_Web-n-ng-cao_CTK47-PM; git switch huy-lab8
+```
+```powershell
+.\run-dev.bat
+```
+
+Script kiểm tra phần mềm và cổng, bật PostgreSQL bằng Docker, chạy backend và frontend trong cửa sổ riêng rồi mở trình duyệt.
+Lần chạy đầu backend tự tạo database `culinaryblog` và dữ liệu mẫu (mỗi lab một database riêng nên chuyển qua lại giữa các lab không ảnh hưởng nhau).
+Thêm `prod` (`run-dev.bat prod`) để build rồi chạy bản chính thức của frontend.
+Chỉ kiểm tra máy đã đủ điều kiện chưa: `.\run-dev.bat check`.
+
+**macOS / Linux**: `bash run-dev.sh` (tương tự, `bash run-dev.sh check` để kiểm tra).
+
+| Địa chỉ | Nội dung |
+|---|---|
+| http://localhost:3000 | Trang web |
+| http://localhost:5000 | API |
+| http://localhost:5000/health | Kiểm tra API và database |
+| http://localhost:5000/scalar/v1 | Tài liệu API |
+| http://localhost:8025 | MailHog: xem email gửi đi |
+
+Tài khoản mẫu (mật khẩu là `Seed:Password` trong `src/CulinaryBlog.API/appsettings.Development.json`, chỉ dùng trên máy phát triển):
+`admin@culinaryblog.local` và `author1@culinaryblog.local`, mật khẩu `Dev@Culinary123`.
+
+**Kiểm tra tự động**: `bash scripts/smoke-test.sh` (Windows dùng Git Bash) chạy lại toàn bộ như máy mới và gọi thử các địa chỉ chính.
+CI trên GitHub chạy đúng script này trên máy Ubuntu sạch ở mỗi lần đẩy code (job `smoke`).
+
+**Lỗi thường gặp**
+
+| Hiện tượng | Cách xử lý |
+|---|---|
+| `port is already allocated` ở cổng 5432 | Máy đã cài PostgreSQL riêng: `set POSTGRES_PORT=5433` (PowerShell: `$env:POSTGRES_PORT=5433`) rồi chạy lại |
+| Cổng 5000/3000 đang bị chiếm | Tắt chương trình đang dùng cổng đó (cổng cần dùng: 5432, 5000, 3000, 1025, 8025) |
+| Docker chưa chạy | Mở Docker Desktop, chờ báo Engine running |
+| Script `.bat` báo lỗi lạ sau khi tải ZIP | Tải lại bản mới nhất của nhánh (file `.gitattributes` giữ đúng kiểu xuống dòng) |
