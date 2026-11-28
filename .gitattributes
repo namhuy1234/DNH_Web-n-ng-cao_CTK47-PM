@@ -1,0 +1,10 @@
+# Giữ đúng kiểu xuống dòng của script khi clone hoặc tải ZIP trên máy khác:
+# cmd.exe cần CRLF cho .bat, bash cần LF cho .sh (CRLF làm lỗi "bad interpreter").
+*.bat text eol=crlf
+*.cmd text eol=crlf
+*.ps1 text eol=crlf
+*.sh  text eol=lf
+
+*.png  binary
+*.jpg  binary
+*.docx binary
