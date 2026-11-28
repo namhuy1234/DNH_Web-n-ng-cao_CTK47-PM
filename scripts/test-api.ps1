@@ -40,12 +40,12 @@ Invoke-Case 422 GET '/api/v1/recipes?page=0&pageSize=100'
 Invoke-Case 400 GET '/api/v1/recipes?page=abc'
 Invoke-Case 200 GET "/api/v1/recipes/$slug"
 Invoke-Case 404 GET '/api/v1/recipes/khong-ton-tai'
-$hidden = & docker exec culinary-postgres psql -U culinary -d culinaryblog -tAc 'select \"Slug\" from \"Recipes\" where \"Status\" = 0 limit 1'
+$hidden = & docker exec culinary-postgres psql -U culinary -d culinaryblog_lab3 -tAc 'select \"Slug\" from \"Recipes\" where \"Status\" = 0 limit 1'
 Invoke-Case 403 GET "/api/v1/recipes/$hidden"
 Invoke-Case 404 GET '/api/v1/khong-co'
 
 # Xoa danh muc vua tao de database tro lai nhu cu
-& docker exec culinary-postgres psql -U culinary -d culinaryblog -qc "delete from \`"Categories\`" where \`"Name\`" like 'Mon thu Lab3%'"
+& docker exec culinary-postgres psql -U culinary -d culinaryblog_lab3 -qc "delete from \`"Categories\`" where \`"Name\`" like 'Mon thu Lab3%'"
 
 $total = $script:results.Count / 4
 $header = "Ket qua kiem thu API - chay ngay $(Get-Date -Format 'dd/MM/yyyy HH:mm')", "Dat $($total - $script:failed)/$total truong hop", ''

@@ -29,7 +29,7 @@ API chạy tại http://localhost:5000.
 ## Kiểm tra dữ liệu
 
 ```powershell
-cmd /c "docker exec -i culinary-postgres psql -U culinary -d culinaryblog < scripts\verify.sql"
+cmd /c "docker exec -i culinary-postgres psql -U culinary -d culinaryblog_lab3 < scripts\verify.sql"
 ```
 
 ## Tạo migration mới
@@ -75,3 +75,41 @@ Kiểm thử (chạy API trước, ở một cửa sổ PowerShell khác):
 ```powershell
 powershell -ExecutionPolicy Bypass -File scripts\test-api.ps1
 ```
+
+## Chạy trên máy khác
+
+Cần cài: Docker Desktop, .NET SDK 10, Git (hoặc tải ZIP). Không cần cài PostgreSQL.
+
+**Windows** – clone (hoặc trên GitHub chọn nhánh `huy-lab3` → Code → Download ZIP rồi giải nén) và chạy:
+
+```powershell
+git clone https://github.com/namhuy1234/DNH_Web-n-ng-cao_CTK47-PM.git
+```
+```powershell
+cd DNH_Web-n-ng-cao_CTK47-PM; git switch huy-lab3
+```
+```powershell
+.\run-dev.bat
+```
+
+Script kiểm tra phần mềm và cổng, bật PostgreSQL bằng Docker, chạy backend trong cửa sổ riêng rồi mở trình duyệt.
+Lần chạy đầu backend tự tạo database `culinaryblog_lab3` và dữ liệu mẫu (mỗi lab một database riêng nên chuyển qua lại giữa các lab không ảnh hưởng nhau).
+Chỉ kiểm tra máy đã đủ điều kiện chưa: `.\run-dev.bat check`.
+
+**macOS / Linux**: `bash run-dev.sh` (tương tự, `bash run-dev.sh check` để kiểm tra).
+
+| Địa chỉ | Nội dung |
+|---|---|
+| http://localhost:5000 | API |
+
+**Kiểm tra tự động**: `bash scripts/smoke-test.sh` (Windows dùng Git Bash) chạy lại toàn bộ như máy mới và gọi thử các địa chỉ chính.
+CI trên GitHub chạy đúng script này trên máy Ubuntu sạch ở mỗi lần đẩy code (job `smoke`).
+
+**Lỗi thường gặp**
+
+| Hiện tượng | Cách xử lý |
+|---|---|
+| `port is already allocated` ở cổng 5432 | Máy đã cài PostgreSQL riêng: `set POSTGRES_PORT=5433` (PowerShell: `$env:POSTGRES_PORT=5433`) rồi chạy lại |
+| Cổng 5000 đang bị chiếm | Tắt chương trình đang dùng cổng đó (cổng cần dùng: 5432, 5000) |
+| Docker chưa chạy | Mở Docker Desktop, chờ báo Engine running |
+| Script `.bat` báo lỗi lạ sau khi tải ZIP | Tải lại bản mới nhất của nhánh (file `.gitattributes` giữ đúng kiểu xuống dòng) |
