@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { connection } from "next/server";
 import { Suspense } from "react";
 import { ArrowLeft } from "lucide-react";
 import { LoadingState } from "@/components/common/Loading";
@@ -35,6 +36,8 @@ export default function EditRecipePage({ params }: PageProps<"/dashboard/recipes
 }
 
 async function EditContent({ params }: Pick<PageProps<"/dashboard/recipes/[id]/edit">, "params">) {
+  // Lấy danh mục lúc mở trang, không lúc build (khi build không có API).
+  await connection();
   const [{ id }, categories] = await Promise.all([params, getCategories()]);
   return <RecipeEditor id={id} categories={categories} />;
 }

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { connection } from "next/server";
 import { Suspense } from "react";
 import { LoadingState } from "@/components/common/Loading";
 import { RecipeForm } from "@/components/dashboard/recipe-editor/RecipeForm";
@@ -25,5 +26,8 @@ export default function NewRecipePage() {
 }
 
 async function NewRecipeForm() {
+  // Lấy danh mục lúc người dùng mở trang, không dựng sẵn lúc build:
+  // khi build (ví dụ trên CI) không có API nên dựng sẵn sẽ làm hỏng bản build.
+  await connection();
   return <RecipeForm categories={await getCategories()} />;
 }
